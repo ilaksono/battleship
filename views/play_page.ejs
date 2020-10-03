@@ -2,25 +2,37 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battleship by IL</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel='stylesheet' href='../styles/main.css'>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battleship by IL</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel='stylesheet' href='../styles/main.css'>
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
-            <a class="navbar-brand" href="/">Battleship</a>
-        </nav>
-    </header>
-
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
+      <a class="navbar-brand" href="/">Battleship</a>
+    </nav>
+  </header>
+  <table id='board'>
     <div class='container'>
+      <% for(let row in board) { %>
+      <tr class='board-row'>
+        <% for(let node in row) { %>
+        <td class='board-node' id='<%=String.fromCharCode(65+row)%><%=node+1%>'></td>
+        <% } %>
+      </tr>
+      <% } %>
 
     </div>
-
-
+  </table>
+  <div>
+  <form name='confirm'>
+    <button id='btnConfirm'></button>
+  </form>
+  </div>
 </body>
 
 </html>
