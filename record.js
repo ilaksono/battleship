@@ -1,5 +1,0 @@
-class Record {
-  constructor() {
-
-  }
-}

@@ -6,6 +6,8 @@
 
 .board-node {
     background-color: skyblue;
+    width: 40px;
+    height: 40px;
 }
 .board-row {
   margin: 0 auto;

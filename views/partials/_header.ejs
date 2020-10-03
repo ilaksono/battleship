@@ -1,0 +1,28 @@
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark bg-info">
+    <a class="navbar-brand" href="/urls">Battleship</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href=""></a>
+        <a class="nav-item nav-link" href=""></a>
+      </div>
+    </div>
+    <% if (user) {%>
+      <div class='text-dark'>Hello, &nbsp;</div>
+    <div style='font-weight: bold' class='text-light'>
+      <%=user%>&nbsp;
+    </div>
+    <form method='POST' action="/logout"><button class='btn text-light btn-primary'>Logout</button></form>
+    <%} else{ %>
+
+    <form class="form-inline" action="/register" method="GET">
+      <button type='submit' style='font-weight: bold' class='btn text-dark'>Register</button></form>
+    <form class="form-inline" action="/login" method="GET">
+      <button type='submit' style='font-weight: bold' class='btn text-light'>Login</button></form>
+    <% } %>
+  </nav>
+</header>

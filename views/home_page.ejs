@@ -17,24 +17,24 @@
       <a class="navbar-brand" href="/">Battleship</a>
     </nav>
   </header>
-  <table id='board1' class='board'>
+  <table class='board' id='board1'>
     <div class='container'>
-      <% for(let row in board) { %>
+      <% for(let row in player1.board) { %>
       <tr class='board-row'>
         <% for(let node in row) { %>
-        <td class='board-node' id='<%=String.fromCharCode(65+row)%><%=node+1%>'></td>
+        <td class='board-node' id='<%=String.fromCharCode(65+row)%><%=node+1%>'><%=row[node] %></td>
         <% } %>
       </tr>
       <% } %>
 
     </div>
   </table>
-  <table id='board2' class='board'>
+  <table class='board' id='board2'>
     <div class='container'>
-      <% for(let row in board) { %>
+      <% for(let row in player1.board) { %>
       <tr class='board-row'>
         <% for(let node in row) { %>
-        <td class='board-node' id='<%=String.fromCharCode(65+row)%><%=node+1%>'></td>
+        <td class='board-node' id='<%=String.fromCharCode(65+row)%><%=node+1%>'><%=row[node] %></td>
         <% } %>
       </tr>
       <% } %>

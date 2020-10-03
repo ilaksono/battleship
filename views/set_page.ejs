@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battleship by IL</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- <link rel='stylesheet' href='../styles/main.css'> -->
+  <style>
+    .board-node {
+      background-color: skyblue;
+      width: 40px;
+      height: 40px;
+    }
+  </style>
+  <script rel="../scripts/board_listeners.js"></script>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
+      <a class="navbar-brand" href="/">Battleship</a>
+    </nav>
+  </header>
+  <div>
+    <p>Place ship:
+      <%user.ships[user.state.currentShipIn].name%>
+    </p>
+    <table>
+      <tr>
+        <% for(let i = 0; i < user.ships[user.state.currentShipIn].size; i++) {%>
+          <td class='board-node'></td>
+          <% } %>
+      </tr>
+    </table>
+  </div>
+
+  <table class='board table table-bordered' id=<%=number%>>
+    <div class='container'>
+      <% for(let row in user.board) { %>
+      <tr class='board-row'>
+        <% for(let node in user.board[row]) { %>
+        <td class='board-node' id=<%=row + node%>>
+          <form method='POST' action='/set/<%=row + node%>?_method=PUT'>
+            <button>
+              <%=user.board[row][node] %>
+            </button>
+          </form>
+        </td>
+        <% } %>
+      </tr>
+      <% } %>
+
+    </div>
+  </table>
+  <div>
+    <form name='confirm'>
+      <button id='btnConfirm' class='btn-info'>Confirm</button>
+    </form>
+  </div>
+</body>
+
+</html>
