@@ -50,8 +50,10 @@
 // };
 
 module.exports = (users, overallState, battleLog) => {
+
+
   const allShipsSunk = (player) => {
-    for (let ship in users[player].ships)
+    for (const ship of users[player].ships)
       if (ship.sunk === false) return false;
 
     return true;
@@ -122,11 +124,10 @@ module.exports = (users, overallState, battleLog) => {
   // ];
 
   const getShipByCode = (code, player) => {
-    let current = player === 'Player 1' ? ships1Available : ships2Available;
-    for (const ship of current) {
-      if (code === ship.code)
-        return ship;
-    }
+    let current = player === 'Player 1' ? users['Player 1'].ships : users['Player 2'].ships;
+    for (const ship of current)
+      if (code === ship.code) return ship;
+
     return false;
   };
 
@@ -144,10 +145,11 @@ module.exports = (users, overallState, battleLog) => {
 
   const sunkShip = (code, board) => {
     for (let row in board) {
-      for (let node in row) {
+      for (let node in board[row]) {
         if (board[row][node] === code) return false;
       }
     }
+
     return true;
   };
 
@@ -156,8 +158,9 @@ module.exports = (users, overallState, battleLog) => {
   //     gameState.phase = 'battle';
   // };
 
+
   const toggleShipBoard = (player, index) => {
-    console.log(users[player].ships[index].coordinates);
+    // console.log(users[player].ships[index].coordinates);
     if (users[player].ships[index].orientation === 'H') {
       for (let i = 1; i < users[player].ships[index].size; i++) {
         const delta = users[player].ships[index].coordinates[i][1] - users[player].ships[index].coordinates[0][1];
@@ -201,12 +204,19 @@ module.exports = (users, overallState, battleLog) => {
     return [parseInt(str[0]), parseInt(str[1])]; // [row#, col#];
   };
 
-  const takeShot = (board, coord) => {
-    if (board[coord[0]][coord[1]] !== 0) {
-      return board[coord[0]][coord[1]];
-    } else
-      return false;
+  const takeShot = (opponent, coord) => {
+    if (users[opponent].board[coord[0]][coord[1]] !== 0) {
+      revealShot(opponent, 'HIT', coord);
+      return users[opponent].board[coord[0]][coord[1]];
+    }
+    revealShot(opponent, 'MISS', coord);
+    return false;
+  };
 
+  const revealShot = (opponent, candidate, coord) => {
+    let player = opponent === 'Player 1' ? 'Player 2' : 'Player 1';
+    if (candidate === 'HIT') users[player].opBoard[coord[0]][coord[1]] = 'X';
+    else users[player].opBoard[coord[0]][coord[1]] = 'O';
   };
 
   // const hitShip = (coord, board) => {
@@ -251,6 +261,9 @@ module.exports = (users, overallState, battleLog) => {
     }
     return arr;
   };
+
+  const convertToBoardNotation = coord => `${String.fromCharCode(65 + Number(coord[1]))}${Number(coord[0]) + 1}`;
+
   return {
     allShipsSunk,
     getShipByCode,
@@ -262,7 +275,8 @@ module.exports = (users, overallState, battleLog) => {
     convertToCoord,
     takeShot,
     placeShipsHorizontal,
-    generateBoard
+    generateBoard,
+    convertToBoardNotation
   };
 };
 //trying promises

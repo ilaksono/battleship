@@ -17,7 +17,6 @@
       padding: 0;
     }
   </style>
-  <script rel="../scripts/board_listeners.js"></script>
 </head>
 
 <body>
@@ -33,23 +32,23 @@
     <table>
       <tr>
         <% for(let i = 0; i < user.ships[user.state.currentShipIn].size; i++) {%>
-          <td class='board-node'></td>
-          <% } %>
+        <td class='board-node'></td>
+        <% } %>
       </tr>
     </table>
   </div>
 
-  <table class='board table table-bordered' id=<%=number%>>
+  <table autofocus class='board table table-bordered' id=<%=number%>>
     <div class='container'>
-      <% for(let row in user.board) { %>
+      <% for (let row in user.board) { %>
       <tr class='board-row'>
-        <% for(let node in user.board[row]) { %>
+        <% for (let node in user.board[row]) { %>
         <td class='board-node' id=<%=row + node%>>
           <form method='POST' action='/set/<%=row + node%>?_method=PUT'>
             <button style="height:100%; width:100%;" class='btn-info'>
-              <% if(user.board[row][node] === 0) {%>
-                  -
-                <%} else {%>
+              <% if (user.board[row][node] === 0) {%>
+              -
+              <%} else {%>
               <%=user.board[row][node] %>
               <% }%>
             </button>
@@ -62,7 +61,7 @@
     </div>
   </table>
   <div>
-    <form class='text-center' name='ready'>
+    <form class='text-center' method='POST' action='/set/ready' name='ready'>
       <button id='btnReady' class='btn-danger'>Ready</button>
     </form>
   </div>

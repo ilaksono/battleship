@@ -44,6 +44,7 @@ app.post('/register', (req, res) => {
   users[player].name = username;
   users[player].board = gameHelpers.generateBoard(10);
   users[player].state.phase = 'set';
+  console.log(req.session.userID);
   res.redirect('/');
 });
 
@@ -54,7 +55,7 @@ app.get('/', (req, res) => {
     return res.redirect('/register');
   }
   // res.render('play_page', templateVars);
-  res.render('home_page', templateVars);
+  res.redirect('/set');
 });
 
 app.post('/', (req, res) => {
@@ -66,7 +67,7 @@ app.get('/set', (req, res) => {
   const user = users[req.session.userID];
   const templateVars = {
     user,
-    number: `board${req.session.userID[6]}`
+    number: `board${req.session.userID[7]}`
   };
   res.render('set_page', templateVars);
 });
@@ -86,7 +87,7 @@ app.put('/set/:node', (req, res) => {
       users[player].state.currentShipOrient = 'H';
       const templateVars = {
         user,
-        number: `board${req.session.userID[6]}`
+        number: `board${req.session.userID[7]}`
       };
       return res.render('set_page', templateVars);
     } else if (users[player].ships[4].available === true && !users[player].state.setDone) { // 
@@ -101,7 +102,8 @@ app.put('/set/:node', (req, res) => {
       else if (cellID !== users[player].state.activeShipCell) {
         gameHelpers.confirmShipPlacement(users[player].ships[users[player].state.currentShipIn], player);
         if (!users[player].ships[4].available) {
-
+          users[player].state.phase = 'battle';
+          users[player].opBoard = gameHelpers.generateBoard(10);
           return res.redirect('/battle');
         }
         return res.redirect('/set');
@@ -112,8 +114,81 @@ app.put('/set/:node', (req, res) => {
   // if(users[player].state.setDone)
 });
 
+//req.session.userID = 'Player 1' || 'Player 2'
+app.get('/set/ready', (req, res) => {
+  users[req.session.userID].state.phase = 'battle';
+  res.redirect('/battle');
+});
+
+app.post('/set/ready', (req, res) => {
+  users[req.session.userID].state.phase = 'battle';
+  res.redirect('/battle');
+});
+
 app.get('/battle', (req, res) => {
-  
+
+  let opponent;
+  if (req.session.userID === 'Player 1') opponent = users['Player 2'];
+  else opponent = users['Player 1'];
+  const user = users[req.session.userID];
+  const templateVars = {
+    user,
+    number: `board${req.session.userID[7]}`,
+    error: '',
+    battleLog
+  };
+  res.render('battle_page', templateVars);
+
+});
+app.get('/db.json', (req, res) => {
+  res.json({users, battleLog});
+});
+
+app.put('/battle/:node', (req, res) => {
+  const player = req.session.userID;
+  let user = users[player];
+  const cellID = req.params.node;
+  const coord = gameHelpers.convertToCoord(cellID);
+  let opponent;
+  if (req.session.userID === 'Player 1') opponent = 'Player 2';
+  else opponent = 'Player 1';
+
+  if (users['Player 1'].state.phase === 'battle' || users['Player 2'].state.phase === 'battle') {
+    if ((battleLog.length % 2) + 1 === Number(player[7])) {
+      let hit = gameHelpers.takeShot(opponent, coord);
+      // let sunk = sunkShip()
+      let desc = `${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'}`;
+      // battleLog.push(`${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'}`);
+      if (hit) {
+        if (gameHelpers.sunkShip(hit, users[opponent].board)) {
+          users[player].ships[hit.charCodeAt(0) - 65].sunk = true;
+          desc += `\n${player} has sunk a ${gameHelpers.getShipByCode(hit, player).name}`;
+          if (gameHelpers.allShipsSunk(opponent)) {
+            users['Player 1'].state.phase = 'end';
+            users['Player 2'].state.phase = 'end';
+            desc += `\n${player} has won!`;
+            return res.send(`${player} has won!`);
+          }
+        }
+      }
+      console.log(desc);
+      battleLog.push({
+        turn: battleLog.length + 1,
+        boardState: {
+          'Player 1': users['Player 1'].opBoard,
+          'Player 2': users['Player 2'].opBoard
+        },
+        desc
+      });
+      return res.redirect('/battle');
+    } else {
+      res.render('battle_page', {
+        error: `Waiting on ${opponent}`, user,
+        number: `board${req.session.userID[7]}`,
+        battleLog
+      });
+    }
+  }
 });
 
 

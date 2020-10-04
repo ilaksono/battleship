@@ -16,8 +16,34 @@
       margin: 0;
       padding: 0;
     }
+
+    .myTable {
+      background-color: blue;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      border: 1px solid black;
+    }
+
+    .myContainer {
+      width: 300px;
+      height: 300px;
+      display: block;
+      text-align: center;
+    }
+
+    .myRow {
+      height: 10%;
+      width: 100%;
+      border: 1px solid black;
+    }
+
+    .myData {
+      height: 20px;
+      width: 20px;
+      border: 1px solid black;
+    }
   </style>
-  <script rel="../scripts/board_listeners.js"></script>
 </head>
 
 <body>
@@ -26,53 +52,68 @@
       <a class="navbar-brand" href="/">Battleship</a>
     </nav>
   </header>
-  <div>
-    <p>My Board:
-    </p>
-    <table>
-      <% for(let row in user.board) { %>
-      <tr>
-        <% for(let node in user.board[row]) { %>
-        <td style='height: 100%; width: 100%' id=<%=row + node%>> 
-              <% if(user.board[row][node] === 0) {%>
-              -
-              <%} else {%>
-              <%=user.board[row][node] %>
-              <% }%>  
-        </td>
+  <table>
+    <tr><td><span>
+      <ol>
+        Battle Log:
+        <% for(let i = 0; i < battleLog.length; i++) {%>
+        <li><%= battleLog[i].desc%></li>
         <% } %>
-      </tr>
-      <% } %>
-    </table>
-  </div>
+      </ol>
 
-  <table class='board table table-bordered' id=<%=number%>>
-    <thead>Opponent's Board: </thead>
-      <% for(let row in user.board) { %>
-      <tr class='board-row'>
-        <% for(let node in user.board[row]) { %>
-        <td class='board-node' id=<%=row + node%>>
-          <form method='POST' action='/set/<%=row + node%>?_method=PUT'>
-            <button style="height:100%; width:100%;" class='btn-info'>
-              <% if(user.board[row][node] === 0) {%>
-              -
-              <%} else {%>
-              <%=user.board[row][node] %>
-              <% }%>
-            </button>
-          </form>
-        </td>
+    </span>
+  </td><td>
+    <div class='myContainer'>
+      <table class='myTable'>
+        <thead>My Board:
+        </thead>
+        <% for(let row in user.board) { %>
+        <tr class='myRow'>
+          <% for(let node in user.board[row]) { %>
+          <td class='myData' id=<%=row + node%>>
+            <% if(user.board[row][node] === 0) {%>
+            -
+            <%} else {%>
+            <%=user.board[row][node] %>
+            <% }%>
+          </td>
+          <% } %>
+        </tr>
         <% } %>
-      </tr>
-      <% } %>
-
-    
+      </table>
+      <aside>
+        <%=error%>
+      </aside>
+    </div>
   </table>
-  <div>
+</td>
+</tr>
+  <table class='board table table-bordered' id=<%=number%> autofocus>
+    <thead>Opponent's Board: </thead>
+    <% for(let row in user.opBoard) { %>
+    <tr class='board-row'>
+      <% for(let node in user.opBoard[row]) { %>
+      <td class='board-node' id=<%=row + node%>>
+        <form method='POST' action='/battle/<%=row + node%>?_method=PUT'>
+          <button style="height:100%; width:100%;" class='btn-info'>
+            <% if(user.opBoard[row][node] === 0) {%>
+            -
+            <%} else {%>
+            <%=user.opBoard[row][node] %>
+            <% }%>
+          </button>
+        </form>
+      </td>
+      <% } %>
+    </tr>
+    <% } %>
+
+  </table>
+  <!-- <div>
     <form class='text-center' name='ready'>
       <button id='btnReady' class='btn-danger'>Ready</button>
     </form>
-  </div>
+  </div> -->
 </body>
 
 </html>
