@@ -157,7 +157,7 @@ app.put('/battle/:node', (req, res) => {
     if ((battleLog.length % 2) + 1 === Number(player[7])) {
       let hit = gameHelpers.takeShot(opponent, coord);
       // let sunk = sunkShip()
-      let desc = `${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'}`;
+      let desc = `${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'} `;
       // battleLog.push(`${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'}`);
       if (hit) {
         if (gameHelpers.sunkShip(hit, users[opponent].board)) {
@@ -166,7 +166,7 @@ app.put('/battle/:node', (req, res) => {
           if (gameHelpers.allShipsSunk(opponent)) {
             users['Player 1'].state.phase = 'end';
             users['Player 2'].state.phase = 'end';
-            desc += `\n${player} has won!`;
+            desc += `${player} has won!`;
             return res.send(`${player} has won!`);
           }
         }

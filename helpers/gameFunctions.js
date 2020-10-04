@@ -1,54 +1,3 @@
-// board1.onclick = (evt) => {
-//   const player = 'Player 1';
-//   const cellID = evt.target.id;
-//   const coord = convertToCoord(cellID); // converts e.g.'A1' to [0, 0]
-//   if (gameState.phase === 'set') {
-//     if (shipsAvailable && gameState.setDone) {
-//       gameState.setDone = false;
-//       placeShipsHorizontal(player, shipsAvailable[gameState.currentShipIn], coord);
-//       gameState.activeShipCell = cellID;
-//       gameState.currentShipOrient = 'H';
-//       return;
-//     } else if (shipsAvailable[4].available === true && !gameState.setDone) { // 
-//       if (cellID === gameState.activeShipCell)
-//         return toggleShipBoard(shipsAvailable[currentShipIn]);
-//       else if (cellID !== gameState.activeShipCell)
-//         return confirmShipPlacement(shipsAvailable[currentShipIn]);
-//     }
-//     return;
-//   }
-
-//   if (game1State.phase === 'battle' && game2State.phase === 'battle') {
-//     if (overallState.playerTurn === 2) {
-//       let hit = takeShot(users[player].board, coord);
-//       // let sunk = sunkShip()
-//       battleLog.push(`Player 2 shoots at ${cellID}: ${hit ? 'HIT' : 'MISS'}`);
-//       if(hit) {
-//         if(sunkShip(hit)) battleLog.push(`Player 2 has sunk a ${getShipByCode(hit, 'Player 2').name}`)
-//       }
-//       if (allShipsSunk('Player 1')) {
-//         overallState = 'end'
-//         battleLog.push(`Player 2 has won!`);
-//         return;
-//       }
-//     } else {
-//       return `Waiting on ${users['Player 1'].name}`;
-//     }
-//   }
-
-//   return cellID;
-// };
-// let battleLog = [];
-
-// const overallState = {
-//   playerTurn: 1,
-// phases 0: register, 0.5: registerDone, 1:set, 1.5: setDone, 2: battle, 3: end
-// };
-// const users = {
-//   "Player 1": { name: '', id: '', board: [], state: 'register', moves: [], hits: [], ships: ships1Available },
-//   "Player 2": { name: '', id: '', board: [], state: 'register', moves: [], hits: [], ships: ships2Available }
-// };
-
 module.exports = (users, overallState, battleLog) => {
 
 
@@ -58,70 +7,6 @@ module.exports = (users, overallState, battleLog) => {
 
     return true;
   };
-
-  // let game1State = { // possible game states = register, set ,battle, end
-  //   phase: 'set',
-  //   setDone: false,
-  //   completeSet: false,
-  //   currentShipIn: 0,
-  //   activeShipCell: null,
-  //   currentShipOrient: null,
-  //   toggleShipOrient: function () {
-  //     if (this.currentShipOrient === 'H')
-  //       this.currentShipOrient = 'V';
-  //     else
-  //       this.currentShipOrient = 'H';
-  //   },
-  //   playerTurn: 1,
-  // };
-
-  // let ships1Available = [
-  //   {
-  //     available: true,
-  //     size: 2,
-  //     code: 'A',
-  //     sunk: false,
-  //     name: 'Destroyer',
-  //     coordinates: [],
-  //     orientation: null
-  //   },
-  //   {
-  //     available: true,
-  //     size: 3,
-  //     code: 'B',
-  //     sunk: false,
-  //     name: 'Submarine',
-  //     coordinates: [],
-  //     orientation: null
-  //   },
-  //   {
-  //     available: true,
-  //     size: 3,
-  //     code: 'C',
-  //     sunk: false,
-  //     name: 'Cruiser',
-  //     coordinates: [],
-  //     orientation: null
-  //   },
-  //   {
-  //     available: true,
-  //     size: 4,
-  //     code: 'D',
-  //     sunk: false,
-  //     name: 'Battleship',
-  //     coordinates: [],
-  //     orientation: null
-  //   },
-  //   {
-  //     available: true,
-  //     size: 5,
-  //     code: 'E',
-  //     sunk: false,
-  //     name: 'Carrier',
-  //     coordinates: [],
-  //     orientation: null
-  //   }
-  // ];
 
   const getShipByCode = (code, player) => {
     let current = player === 'Player 1' ? users['Player 1'].ships : users['Player 2'].ships;
@@ -153,14 +38,7 @@ module.exports = (users, overallState, battleLog) => {
     return true;
   };
 
-  // btnConfirm.onclick = (evt) => {
-  //   if (allShipsSet(shipsAvailable) && gameState.phase === 'set')
-  //     gameState.phase = 'battle';
-  // };
-
-
   const toggleShipBoard = (player, index) => {
-    // console.log(users[player].ships[index].coordinates);
     if (users[player].ships[index].orientation === 'H') {
       for (let i = 1; i < users[player].ships[index].size; i++) {
         const delta = users[player].ships[index].coordinates[i][1] - users[player].ships[index].coordinates[0][1];
@@ -199,16 +77,17 @@ module.exports = (users, overallState, battleLog) => {
   const recordMove = (id, player) => `${player} shoots at ${id}: ${takeShot(convertToCoord(board, id)) ? 'HIT' : 'MISS'}`;
 
   const convertToCoord = str => { // 00 is [0][0]
-    // let col = String.charCodeAt(str[0]) - 65;
-    // let row = Number([...id].slice(1)) - 1;
     return [parseInt(str[0]), parseInt(str[1])]; // [row#, col#];
   };
 
   const takeShot = (opponent, coord) => {
     if (users[opponent].board[coord[0]][coord[1]] !== 0) {
       revealShot(opponent, 'HIT', coord);
-      return users[opponent].board[coord[0]][coord[1]];
+      const code = users[opponent].board[coord[0]][coord[1]];
+      users[opponent].board[coord[0]][coord[1]] = 'X';
+      return code;
     }
+    users[opponent].board[coord[0]][coord[1]] = 'O';
     revealShot(opponent, 'MISS', coord);
     return false;
   };
@@ -218,11 +97,6 @@ module.exports = (users, overallState, battleLog) => {
     if (candidate === 'HIT') users[player].opBoard[coord[0]][coord[1]] = 'X';
     else users[player].opBoard[coord[0]][coord[1]] = 'O';
   };
-
-  // const hitShip = (coord, board) => {
-  //   board[coord[0]][coord[1]] = 'X';
-  //   console.log('HIT');
-  // };
 
   const placeShipsHorizontal = (player, ship, coord) => {
     let tmp = Array(ship.size).fill(ship.code);
@@ -234,22 +108,6 @@ module.exports = (users, overallState, battleLog) => {
     return ship.orientation;
 
   };
-
-  // const placeShipsVertical = (board, ship, coord) => {
-  //   for (let row = coord[0]; row < coord[0] + ship.size; row++)
-  //     board[row][coord[1]] = ship.code;
-  //   return board;
-  // };
-  // const placeShip = (board, size, coord, orient) => {
-  //   if (orient) return placeShipsHorizontal(board, size, coord);
-  //   else return placeShipsVertical(board, size, corod);
-
-  // };
-
-  // verify.onclick = (evt) => {
-
-  // };;
-
 
   const generateBoard = size => {
     let arr = [];
@@ -304,95 +162,3 @@ module.exports = (users, overallState, battleLog) => {
 // }).catch(err => {
 //   console.log(err);
 // });
-
-// board2.onclick = (evt) => {
-//   const player = 'Player 2';
-//   const cellID = evt.target.id;
-//   const coord = convertToCoord(cellID); // converts e.g.'A1' to [0, 0]
-//   if (gameState.phase === 'set') {
-//     if (shipsAvailable && gameState.setDone) {
-//       gameState.setDone = false;
-//       placeShipsHorizontal(gameBoard, shipsAvailable[gameState.currentShipIn], coord);
-//       gameState.activeShipCell = cellID;
-//       gameState.currentShipOrient = 'H';
-//       return gameBoard;
-//     } else if (shipsAvailable[4].available === true && !gameState.setDone) { //
-//       if (cellID === gameState.activeShipCell)
-//         return toggleShipBoard(shipsAvailable[currentShipIn]);
-//       else if (cellID !== gameState.activeShipCell)
-//         return confirmShipPlacement(shipsAvailable[currentShipIn]);
-//     }
-//     return;
-//   }
-
-//   if (game1State.phase === 'battle' && game2State.phase === 'battle') {
-//     if (overallState.playerTurn === 1) {
-//       let hit = takeShot(users[player].board, coord);
-//       battleLog.push(`Player 1 shoots at ${cellID}: ${hit ? 'HIT' : 'MISS'}`);
-//       if(hit) {
-//         if(sunkShip(hit)) battleLog.push(`Player 1 has sunk a ${getShipByCode(hit, 'Player 1').name}`)
-//       }
-//       if (allShipsSunk('Player 2')) {
-//         overallState = 'end'
-//         battleLog.push(`Player 1 has won!`);
-//         return;
-//       }
-//     } else {
-//       return `Waiting on ${users['Player 2'].name}`;
-//     }
-//   }
-
-//   return cellID;
-// };
-// const game2State = { // possible game states = register, set ,battle, end
-//   phase: 'set',
-//   setDone: false,
-//   completeSet: false,
-//   currentShipIn: 0,
-//   activeShipCell: null,
-//   currentShipOrient: null,
-//   toggleShipOrient: function () {
-//     if (this.currentShipOrient === 'H')
-//       this.currentShipOrient = 'V';
-//     else
-//       this.currentShipOrient = 'H';
-//   }
-// };
-
-// const ships2Available = [
-//   {
-//     available: true,
-//     size: 2,
-//     code: 'A',
-//     coordinates: [],
-//     orientation: null
-//   },
-//   {
-//     available: true,
-//     size: 3,
-//     code: 'B',
-//     coordinates: [],
-//     orientation: null
-//   },
-//   {
-//     available: true,
-//     size: 3,
-//     code: 'C',
-//     coordinates: [],
-//     orientation: null
-//   },
-//   {
-//     available: true,
-//     size: 4,
-//     code: 'D',
-//     coordinates: [],
-//     orientation: null
-//   },
-//   {
-//     available: true,
-//     size: 5,
-//     code: 'E',
-//     coordinates: [],
-//     orientation: null
-//   }
-// ];

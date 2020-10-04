@@ -1,13 +1,18 @@
-let A = [
-  [1,2,3],
-  [4,5,6],
-  [7,8,9]
-]
+// let A = [
+//   [1,2,3],
+//   [4,5,6],
+//   [7,8,9]
+// ]
 
-console.log(A);
-A[2][1] = A[2][0];
+// console.log(A);
+// A[2][1] = A[2][0];
 
-console.log(A);
-A[2][1] = 'E';
+// console.log(A);
+// A[2][1] = 'E';
 
-console.log(A);
+// console.log(A);
+const A = 'Destroyer'
+
+let str = `HIT`;
+str += `Sunk ${A}`;
+console.log(str);

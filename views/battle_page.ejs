@@ -55,7 +55,7 @@
   <table>
     <tr><td><span>
       <ol>
-        Battle Log:
+        <strong>Battle Log:</strong>
         <% for(let i = 0; i < battleLog.length; i++) {%>
         <li><%= battleLog[i].desc%></li>
         <% } %>
@@ -88,7 +88,7 @@
   </table>
 </td>
 </tr>
-  <table class='board table table-bordered' id=<%=number%> autofocus>
+  <table class='board table table-bordered' id=<%=number%> >
     <thead>Opponent's Board: </thead>
     <% for(let row in user.opBoard) { %>
     <tr class='board-row'>
@@ -109,11 +109,11 @@
     <% } %>
 
   </table>
-  <!-- <div>
+  <div>
     <form class='text-center' name='ready'>
-      <button id='btnReady' class='btn-danger'>Ready</button>
+      <button id='btnReady' class='btn-danger' autofocus></button>
     </form>
-  </div> -->
+  </div>
 </body>
 
 </html>
