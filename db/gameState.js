@@ -1,6 +1,6 @@
 let game2State = { // possible game states = register, set ,battle, end
   phase: 'register',
-  setDone: false,
+  setDone: true,
   completeSet: false,
   currentShipIn: 0,
   activeShipCell: null,
@@ -65,7 +65,7 @@ let ships2Available = [
 
 let game1State = { // possible game states = register, set ,battle, end
   phase: 'register',
-  setDone: false,
+  setDone: true,
   completeSet: false,
   currentShipIn: 0,
   activeShipCell: null,

@@ -49,7 +49,7 @@
 //   "Player 2": { name: '', id: '', board: [], state: 'register', moves: [], hits: [], ships: ships2Available }
 // };
 
-module.exports = () => {
+module.exports = (users, overallState, battleLog) => {
   const allShipsSunk = (player) => {
     for (let ship in users[player].ships)
       if (ship.sunk === false) return false;
@@ -130,14 +130,14 @@ module.exports = () => {
     return false;
   };
 
-  const confirmShipPlacement = (ship) => {
+  const confirmShipPlacement = (ship, player) => {
 
     ship.available = false;
-    gameState.setDone = true;
-    gameState.currentShipIn++;
+    users[player].state.setDone = true;
+    users[player].state.currentShipIn++;
     if (ship.code === 'E') {
-      gameState.completeSet = true;
-      gameState.phase = 'battle';
+      users[player].state.completeSet = true;
+      users[player].state.phase = 'battle';
     }
 
   };
@@ -156,23 +156,30 @@ module.exports = () => {
   //     gameState.phase = 'battle';
   // };
 
-  const toggleShipBoard = (ship) => {
-    if (ship.orientation === 'H') {
-      for (let i = 1; i < ship.size; i++) {
-        const delta = ship.coordinates[i][1] - ship.coordinates[0][1];
-        ship.coordinates[i][1] = ship.coordinates[0][1];
-        ship.coordinates[i][0] += delta;
+  const toggleShipBoard = (player, index) => {
+    console.log(users[player].ships[index].coordinates);
+    if (users[player].ships[index].orientation === 'H') {
+      for (let i = 1; i < users[player].ships[index].size; i++) {
+        const delta = users[player].ships[index].coordinates[i][1] - users[player].ships[index].coordinates[0][1];
+        users[player].board[users[player].ships[index].coordinates[i][0]][users[player].ships[index].coordinates[i][1]] = 0;
+        users[player].ships[index].coordinates[i][1] = users[player].ships[index].coordinates[0][1];
+        users[player].ships[index].coordinates[i][0] += delta;
+        users[player].board[users[player].ships[index].coordinates[i][0]][users[player].ships[index].coordinates[i][1]] =
+          users[player].board[users[player].ships[index].coordinates[0][0]][users[player].ships[index].coordinates[0][1]];
       }
-      ship.orientation = 'V';
+      users[player].ships[index].orientation = 'V';
       return;
     }
-    else if (ship.orientation === 'V') {
-      for (let i = 1; i < ship.size; i++) {
-        const delta = ship.coordinates[i][0] - ship.coordinates[0][0];
-        ship.coordinates[i][0] = ship.coordinates[0][0];
-        ship.coordinates[i][1] += delta;
+    else if (users[player].ships[index].orientation === 'V') {
+      for (let i = 1; i < users[player].ships[index].size; i++) {
+        const delta = users[player].ships[index].coordinates[i][0] - users[player].ships[index].coordinates[0][0];
+        users[player].board[users[player].ships[index].coordinates[i][0]][users[player].ships[index].coordinates[i][1]] = 0;
+        users[player].ships[index].coordinates[i][0] = users[player].ships[index].coordinates[0][0];
+        users[player].ships[index].coordinates[i][1] += delta;
+        users[player].board[users[player].ships[index].coordinates[i][0]][users[player].ships[index].coordinates[i][1]] =
+          users[player].board[users[player].ships[index].coordinates[0][0]][users[player].ships[index].coordinates[0][1]];
       }
-      ship.orientation = 'H';
+      users[player].ships[index].orientation = 'H';
       return;
     }
   };
@@ -188,10 +195,10 @@ module.exports = () => {
 
   const recordMove = (id, player) => `${player} shoots at ${id}: ${takeShot(convertToCoord(board, id)) ? 'HIT' : 'MISS'}`;
 
-  const convertToCoord = str => {
-    let col = String.charCodeAt(str[0]) - 65;
-    let row = Number([...id].slice(1)) - 1;
-    return [row, col];
+  const convertToCoord = str => { // 00 is [0][0]
+    // let col = String.charCodeAt(str[0]) - 65;
+    // let row = Number([...id].slice(1)) - 1;
+    return [parseInt(str[0]), parseInt(str[1])]; // [row#, col#];
   };
 
   const takeShot = (board, coord) => {

@@ -27,20 +27,27 @@
     </nav>
   </header>
   <div>
-    <p>Place ship:
-      <%=user.ships[user.state.currentShipIn].name%>
+    <p>My Board:
     </p>
     <table>
+      <% for(let row in user.board) { %>
       <tr>
-        <% for(let i = 0; i < user.ships[user.state.currentShipIn].size; i++) {%>
-          <td class='board-node'></td>
-          <% } %>
+        <% for(let node in user.board[row]) { %>
+        <td style='height: 100%; width: 100%' id=<%=row + node%>> 
+              <% if(user.board[row][node] === 0) {%>
+              -
+              <%} else {%>
+              <%=user.board[row][node] %>
+              <% }%>  
+        </td>
+        <% } %>
       </tr>
+      <% } %>
     </table>
   </div>
 
   <table class='board table table-bordered' id=<%=number%>>
-    <div class='container'>
+    <thead>Opponent's Board: </thead>
       <% for(let row in user.board) { %>
       <tr class='board-row'>
         <% for(let node in user.board[row]) { %>
@@ -48,8 +55,8 @@
           <form method='POST' action='/set/<%=row + node%>?_method=PUT'>
             <button style="height:100%; width:100%;" class='btn-info'>
               <% if(user.board[row][node] === 0) {%>
-                  -
-                <%} else {%>
+              -
+              <%} else {%>
               <%=user.board[row][node] %>
               <% }%>
             </button>
@@ -59,7 +66,7 @@
       </tr>
       <% } %>
 
-    </div>
+    
   </table>
   <div>
     <form class='text-center' name='ready'>
