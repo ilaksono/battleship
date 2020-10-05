@@ -109,6 +109,32 @@ module.exports = (users, overallState, battleLog) => {
 
   };
 
+  const isHorizontalRestricted = (player, ship, coord) => {
+    if (coord[1] + ship.size > 9) return true;
+    for (let i = 0; i < ship.size; i++)
+      if (users[player].board[coord[0]][coord[1] + i] !== 0) return true;
+
+    return false;
+
+  };
+  const isVerticalResitricted = (player, ship, coord) => {
+    if (coord[0] + ship.size > 9) return true;
+    for (let i = 0; i < ship.size; i++)
+      if (users[player].board[coord[0] + i][coord[1]] !== 0) return true;
+
+    return false;
+
+  };
+
+  const placeShipsVertical = (player, ship, coord) => {
+    for (let row = coord[0]; row < coord[0] + ship.size; row++) {
+      board[row][coord[1]] = ship.code;
+      ship.coordinates.push([coord[0] + row, coord[1]]);
+    }
+    ship.orientation = 'V';
+    return ship.orientation;
+  };
+
   const generateBoard = size => {
     let arr = [];
     for (let i = 0; i < size; i++) {
@@ -122,6 +148,278 @@ module.exports = (users, overallState, battleLog) => {
 
   const convertToBoardNotation = coord => `${String.fromCharCode(65 + Number(coord[1]))}${Number(coord[0]) + 1}`;
 
+  const playAgain = () => {
+    let game2State = { // possible game states = register, set ,battle, end
+      phase: 'set',
+      setDone: true,
+      completeSet: false,
+      currentShipIn: 0,
+      activeShipCell: null,
+      currentShipOrient: null,
+      toggleShipOrient: function () {
+        if (this.currentShipOrient === 'H')
+          this.currentShipOrient = 'V';
+        else
+          this.currentShipOrient = 'H';
+      },
+    };
+
+    battleLog = [];
+
+    let ships2Available = [
+      {
+        available: true,
+        size: 2,
+        code: 'A',
+        sunk: false,
+        name: 'Destroyer',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'B',
+        sunk: false,
+        name: 'Submarine',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'C',
+        sunk: false,
+        name: 'Cruiser',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 4,
+        code: 'D',
+        sunk: false,
+        name: 'Battleship',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 5,
+        code: 'E',
+        sunk: false,
+        name: 'Carrier',
+        coordinates: [],
+        orientation: null
+      }
+    ];
+
+    let game1State = { // possible game states = register, set ,battle, end
+      phase: 'set',
+      setDone: true,
+      completeSet: false,
+      currentShipIn: 0,
+      activeShipCell: null,
+      currentShipOrient: null,
+      toggleShipOrient: function () {
+        if (this.currentShipOrient === 'H')
+          this.currentShipOrient = 'V';
+        else
+          this.currentShipOrient = 'H';
+      },
+    };
+
+    let ships1Available = [
+      {
+        available: true,
+        size: 2,
+        code: 'A',
+        sunk: false,
+        name: 'Destroyer',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'B',
+        sunk: false,
+        name: 'Submarine',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'C',
+        sunk: false,
+        name: 'Cruiser',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 4,
+        code: 'D',
+        sunk: false,
+        name: 'Battleship',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 5,
+        code: 'E',
+        sunk: false,
+        name: 'Carrier',
+        coordinates: [],
+        orientation: null
+      }
+    ];
+    users["Player 1"] = { name: users['Player 1'].name, id: 'Player 1', board: generateBoard(10), opBoard: generateBoard(10), state: game1State, moves: [], hits: [], ships: ships1Available },
+      users["Player 2"] = { name: users['Player 2'].name, id: 'Player 2', board: generateBoard(10), opBoard: generateBoard(10), state: game2State, moves: [], hits: [], ships: ships2Available };
+  };
+  const resetAll = () => {
+
+    let game2State = { // possible game states = register, set ,battle, end
+      phase: 'register',
+      setDone: true,
+      completeSet: false,
+      currentShipIn: 0,
+      activeShipCell: null,
+      currentShipOrient: null,
+      toggleShipOrient: function () {
+        if (this.currentShipOrient === 'H')
+          this.currentShipOrient = 'V';
+        else
+          this.currentShipOrient = 'H';
+      },
+    };
+
+    battleLog = [];
+
+    let ships2Available = [
+      {
+        available: true,
+        size: 2,
+        code: 'A',
+        sunk: false,
+        name: 'Destroyer',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'B',
+        sunk: false,
+        name: 'Submarine',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'C',
+        sunk: false,
+        name: 'Cruiser',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 4,
+        code: 'D',
+        sunk: false,
+        name: 'Battleship',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 5,
+        code: 'E',
+        sunk: false,
+        name: 'Carrier',
+        coordinates: [],
+        orientation: null
+      }
+    ];
+
+    let game1State = { // possible game states = register, set ,battle, end
+      phase: 'register',
+      setDone: true,
+      completeSet: false,
+      currentShipIn: 0,
+      activeShipCell: null,
+      currentShipOrient: null,
+      toggleShipOrient: function () {
+        if (this.currentShipOrient === 'H')
+          this.currentShipOrient = 'V';
+        else
+          this.currentShipOrient = 'H';
+      },
+    };
+
+    let ships1Available = [
+      {
+        available: true,
+        size: 2,
+        code: 'A',
+        sunk: false,
+        name: 'Destroyer',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'B',
+        sunk: false,
+        name: 'Submarine',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'C',
+        sunk: false,
+        name: 'Cruiser',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 4,
+        code: 'D',
+        sunk: false,
+        name: 'Battleship',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 5,
+        code: 'E',
+        sunk: false,
+        name: 'Carrier',
+        coordinates: [],
+        orientation: null
+      }
+    ];
+    const overallState = {
+      playerTurn: 1,
+      // phases 0: register, 0.5: registerDone, 1:set, 1.5: setDone, 2: battle, 3: end
+    };
+
+    users["Player 1"] = { name: '', id: '', board: [], opBoard: [], state: game1State, moves: [], hits: [], ships: ships1Available };
+    users["Player 2"] = { name: '', id: '', board: [], opBoard: [], state: game2State, moves: [], hits: [], ships: ships2Available };
+  };
+
+
+
+
   return {
     allShipsSunk,
     getShipByCode,
@@ -134,7 +432,12 @@ module.exports = (users, overallState, battleLog) => {
     takeShot,
     placeShipsHorizontal,
     generateBoard,
-    convertToBoardNotation
+    convertToBoardNotation,
+    playAgain,
+    resetAll,
+    isHorizontalRestricted,
+    isVerticalResitricted,
+    placeShipsVertical
   };
 };
 //trying promises

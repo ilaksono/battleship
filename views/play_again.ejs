@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <title>Play Again - Battleship</title>
+</head>
+
+<body>
+  <header>
+    <%- include('./partials/_header'); %>
+  </header>
+  <div class="card text-center">
+    <div class="card-header">
+    </div>
+    <div class="card-body">
+      <% if (error) {%>
+      <h2 class='text-danger'><%= error %></h2>
+      <% } %>
+
+      <form action='/play-again' method='GET'>
+        <p>Rematch</p>
+        <button class='btn btn-primary' type='submit'>Play Again</button></p>
+      </form>
+      <form action='/replay' method='GET'>
+        <p>Rewatch Match</p><button class='btn btn-primary' type='submit'>Watch Replay</button></p>
+      </form>
+    </div>
+  </div>
+
+</body>
+
+</html>

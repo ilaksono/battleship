@@ -3,7 +3,6 @@ const port = 8080;
 const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
-const generateID = () => Math.random().toString(36).substring(2, 8);
 
 const { users, overallState, battleLog } = require('./db/gameState');
 const gameHelpers = require('./helpers/gameFunctions')(users, overallState, battleLog);
@@ -15,15 +14,9 @@ app.use(cookieSession({
   keys: ['itsASecret', 'JKLUL'],
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
-const boardHelpers = require('./helpers/boardHelpers');
 
 
 app.use(methodOverride('_method'));
-
-// const users = {
-//   "Player 1": { name: '', id: '', board: [], state: 'register', moves: [], hits: [], ships: ships1Available },
-//   "Player 2": { name: '', id: '', board: [], state: 'register', moves: [], hits: [], ships: ships2Available }
-// };
 
 const whichPlayer = (userDB, playerID) => {
   if (userDB['Player 1'].id === playerID) return 'Player 1';
@@ -54,7 +47,6 @@ app.get('/', (req, res) => {
       return res.send('Please wait for other player');
     return res.redirect('/register');
   }
-  // res.render('play_page', templateVars);
   res.redirect('/set');
 });
 
@@ -92,11 +84,9 @@ app.put('/set/:node', (req, res) => {
       return res.render('set_page', templateVars);
     } else if (users[player].ships[4].available === true && !users[player].state.setDone) { // 
       if (cellID === users[player].state.activeShipCell) {
+        if (gameHelpers.isHorizontalRestricted(player, users[player].ships[users[player].state.currentShipIn],coord) 
+          && !gameHelpers.isVerticalResitricted(player, users[player].ships[users[player].state.currentShipIn],coord))
         gameHelpers.toggleShipBoard(player, users[player].state.currentShipIn);
-        // const templateVars = {
-        //   user,
-        //   number: `board${req.session.userID[6]}`
-        // };
         return res.redirect('/set');
       }
       else if (cellID !== users[player].state.activeShipCell) {
@@ -111,7 +101,6 @@ app.put('/set/:node', (req, res) => {
     }
   }
 
-  // if(users[player].state.setDone)
 });
 
 //req.session.userID = 'Player 1' || 'Player 2'
@@ -141,7 +130,7 @@ app.get('/battle', (req, res) => {
 
 });
 app.get('/db.json', (req, res) => {
-  res.json({users, battleLog});
+  res.json({ users, battleLog });
 });
 
 app.put('/battle/:node', (req, res) => {
@@ -156,9 +145,7 @@ app.put('/battle/:node', (req, res) => {
   if (users['Player 1'].state.phase === 'battle' || users['Player 2'].state.phase === 'battle') {
     if ((battleLog.length % 2) + 1 === Number(player[7])) {
       let hit = gameHelpers.takeShot(opponent, coord);
-      // let sunk = sunkShip()
       let desc = `${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'} `;
-      // battleLog.push(`${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'}`);
       if (hit) {
         if (gameHelpers.sunkShip(hit, users[opponent].board)) {
           users[player].ships[hit.charCodeAt(0) - 65].sunk = true;
@@ -191,6 +178,14 @@ app.put('/battle/:node', (req, res) => {
   }
 });
 
+app.get('/play-again', (req, res) => {
+  gameHelpers.playAgain();
+  res.redirect('/set');
+});
+
+app.get('/replay', (req, res) => {
+  res.render('replay_page', { battleLog, user: users[req.session.userID].name });
+});
 
 
 const getPlayerByName = name => users['Player 1'].name === name ? 'Player 1' : 'Player 2';
