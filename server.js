@@ -59,7 +59,8 @@ app.get('/set', (req, res) => {
   const user = users[req.session.userID];
   const templateVars = {
     user,
-    number: `board${req.session.userID[7]}`
+    number: `board${req.session.userID[7]}`,
+    error: '',
   };
   res.render('set_page', templateVars);
 });
@@ -73,19 +74,53 @@ app.put('/set/:node', (req, res) => {
   const coord = gameHelpers.convertToCoord(req.params.node); // converts e.g.'A1' to [0, 0]
   if (users[player].state.phase === 'set') {
     if (users[player].state.setDone) {
+      if (gameHelpers.isHorizontalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)
+        && !gameHelpers.isVerticalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)) {
+        gameHelpers.placeShipsVertical(player, users[player].ships[users[player].state.currentShipIn], coord);
+        users[player].state.currentShipOrient = 'H';
+        gameHelpers.confirmShipPlacement(users[player].ships[users[player].state.currentShipIn], player);
+        const templateVars = {
+          user,
+          number: `board${req.session.userID[7]}`,
+          error: 'Horizontally restricted, confirmed placement.'
+        };
+        if (!users[player].ships[4].available) {
+          users[player].state.phase = 'battle';
+          users[player].opBoard = gameHelpers.generateBoard(10);
+          return res.redirect('/battle');
+        }
+        return res.render('set_page', templateVars);
+      } else if (gameHelpers.isHorizontalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)
+        && gameHelpers.isVerticalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)) {
+        const templateVars = {
+          user,
+          number: `board${req.session.userID[7]}`,
+          error: 'Restricted both ways, try again'
+        };
+        return res.render('set_page', templateVars);
+      }
       users[player].state.setDone = false;
       gameHelpers.placeShipsHorizontal(player, users[player].ships[users[player].state.currentShipIn], coord);
       users[player].state.activeShipCell = cellID;
       users[player].state.currentShipOrient = 'H';
+      let error = '';
+      if (gameHelpers.isVerticalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)) {
+        gameHelpers.confirmShipPlacement(users[player].ships[users[player].state.currentShipIn], player);
+        error = 'Vertically restricted, confirmed placement';
+      }
+      if (!users[player].ships[4].available) {
+        users[player].state.phase = 'battle';
+        users[player].opBoard = gameHelpers.generateBoard(10);
+        return res.redirect('/battle');
+      }
       const templateVars = {
         user,
-        number: `board${req.session.userID[7]}`
+        number: `board${req.session.userID[7]}`,
+        error
       };
       return res.render('set_page', templateVars);
     } else if (users[player].ships[4].available === true && !users[player].state.setDone) { // 
       if (cellID === users[player].state.activeShipCell) {
-        if (gameHelpers.isHorizontalRestricted(player, users[player].ships[users[player].state.currentShipIn],coord) 
-          && !gameHelpers.isVerticalResitricted(player, users[player].ships[users[player].state.currentShipIn],coord))
         gameHelpers.toggleShipBoard(player, users[player].state.currentShipIn);
         return res.redirect('/set');
       }
@@ -148,7 +183,9 @@ app.put('/battle/:node', (req, res) => {
       let desc = `${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'} `;
       if (hit) {
         if (gameHelpers.sunkShip(hit, users[opponent].board)) {
+          console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
           users[player].ships[hit.charCodeAt(0) - 65].sunk = true;
+          console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
           desc += `\n${player} has sunk a ${gameHelpers.getShipByCode(hit, player).name}`;
           if (gameHelpers.allShipsSunk(opponent)) {
             users['Player 1'].state.phase = 'end';

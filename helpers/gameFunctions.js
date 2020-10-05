@@ -110,16 +110,16 @@ module.exports = (users, overallState, battleLog) => {
   };
 
   const isHorizontalRestricted = (player, ship, coord) => {
-    if (coord[1] + ship.size > 9) return true;
-    for (let i = 0; i < ship.size; i++)
+    if (coord[1] + ship.size > 10) return true;
+    for (let i = 1; i < ship.size; i++)
       if (users[player].board[coord[0]][coord[1] + i] !== 0) return true;
 
     return false;
 
   };
-  const isVerticalResitricted = (player, ship, coord) => {
-    if (coord[0] + ship.size > 9) return true;
-    for (let i = 0; i < ship.size; i++)
+  const isVerticalRestricted = (player, ship, coord) => {
+    if (coord[0] + ship.size > 10) return true;
+    for (let i = 1; i < ship.size; i++)
       if (users[player].board[coord[0] + i][coord[1]] !== 0) return true;
 
     return false;
@@ -128,7 +128,7 @@ module.exports = (users, overallState, battleLog) => {
 
   const placeShipsVertical = (player, ship, coord) => {
     for (let row = coord[0]; row < coord[0] + ship.size; row++) {
-      board[row][coord[1]] = ship.code;
+      users[player].board[row][coord[1]] = ship.code;
       ship.coordinates.push([coord[0] + row, coord[1]]);
     }
     ship.orientation = 'V';
@@ -436,7 +436,7 @@ module.exports = (users, overallState, battleLog) => {
     playAgain,
     resetAll,
     isHorizontalRestricted,
-    isVerticalResitricted,
+    isVerticalRestricted,
     placeShipsVertical
   };
 };

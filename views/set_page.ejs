@@ -25,11 +25,11 @@
       <a class="navbar-brand" href="/">Battleship</a>
     </nav>
   </header>
-  <div>
+  <div style='display: block; text-align: center;'>
     <p>Place ship:
       <%=user.ships[user.state.currentShipIn].name%>
     </p>
-    <table>
+    <table style='margin: 0 auto;'>
       <tr>
         <% for(let i = 0; i < user.ships[user.state.currentShipIn].size; i++) {%>
         <td class='board-node'></td>
@@ -37,6 +37,11 @@
       </tr>
     </table>
   </div>
+  <%if(error) {%>
+  <p>
+    <%=error%>
+  </p>
+  <% } %>
 
   <table  class='board table table-bordered' id=<%=number%>>
     <div class='container'> 
