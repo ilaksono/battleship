@@ -135,7 +135,6 @@ app.put('/set/:node', (req, res) => {
       }
     }
   }
-
 });
 
 //req.session.userID = 'Player 1' || 'Player 2'
@@ -148,6 +147,10 @@ app.post('/set/ready', (req, res) => {
   users[req.session.userID].state.phase = 'battle';
   res.redirect('/battle');
 });
+
+app.get('/board', (req, res) => {
+  res.json(users[req.params.userID].board)
+})
 
 app.get('/battle', (req, res) => {
 
@@ -184,7 +187,7 @@ app.put('/battle/:node', (req, res) => {
       if (hit) {
         if (gameHelpers.sunkShip(hit, users[opponent].board)) {
           console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
-          users[player].ships[hit.charCodeAt(0) - 65].sunk = true;
+          users[opponent].ships[hit.charCodeAt(0) - 65].sunk = true;
           console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
           desc += `\n${player} has sunk a ${gameHelpers.getShipByCode(hit, player).name}`;
           if (gameHelpers.allShipsSunk(opponent)) {
@@ -213,6 +216,7 @@ app.put('/battle/:node', (req, res) => {
       });
     }
   }
+  res.send('You lost');
 });
 
 app.get('/play-again', (req, res) => {

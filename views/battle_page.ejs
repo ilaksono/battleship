@@ -8,23 +8,21 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <!-- <link rel='stylesheet' href='../styles/main.css'> -->
+  <script>
+    function fRefresh() {
+      setInterval(() => {
+        location.reload();
+      }, 3300);
+    }
+  </script>
   <style>
     .board-node {
       background-color: skyblue;
-      width: 40px;
-      height: 40px;
+      width: 10%;
+      height: 100%;
       margin: 0;
       padding: 0;
     }
-
-    .myTable {
-      background-color: blue;
-      width: 100%;
-      height: 100%;
-      margin: 0 auto;
-      border: 1px solid black;
-    }
-
     .myContainer {
       width: 300px;
       height: 300px;
@@ -36,6 +34,17 @@
       height: 10%;
       width: 100%;
       border: 1px solid black;
+      margin: 0;
+      padding: 0;
+    }
+
+    .myTable {
+      background-color: blue;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      border: 1px solid black;
+      flex-grow: 1;
     }
 
     .myData {
@@ -43,53 +52,68 @@
       width: 20px;
       border: 1px solid black;
     }
+
+    .battle-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .op-board {
+      width: 550px;
+      height: 550px;
+    }
   </style>
+
 </head>
 
-<body>
+<body onload='fRefresh()'>
   <header>
     <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
       <a class="navbar-brand" href="/">Battleship</a>
     </nav>
   </header>
+  <div class='battle-container'>
   <table>
-    <tr><td><span>
-      <ol>
-        <strong>Battle Log:</strong>
-        <% for(let i = 0; i < battleLog.length; i++) {%>
-        <li><%= battleLog[i].desc%></li>
-        <% } %>
-      </ol>
-
-    </span>
-  </td><td>
-    <div class='myContainer'>
-      <table class='myTable'>
-        <thead>My Board:
-        </thead>
-        <% for(let row in user.board) { %>
-        <tr class='myRow'>
-          <% for(let node in user.board[row]) { %>
-          <td class='myData' id=<%=row + node%>>
-            <% if(user.board[row][node] === 0) {%>
-            -
-            <%} else {%>
-            <%=user.board[row][node] %>
-            <% }%>
-          </td>
-          <% } %>
-        </tr>
-        <% } %>
-      </table>
-      <aside>
-        <%=error%>
-      </aside>
-    </div>
+    <tr>
+      <td><span>
+          <ol>
+            <strong>Battle Log:</strong>
+            <% for(let i = 0; i < battleLog.length; i++) {%>
+            <li><%= battleLog[i].desc%></li>
+            <% } %>
+          </ol>
+        </span>
+      </td>
+      <td>
+        
+          <div class='myContainer'>
+            <table class='myTable'>
+              <thead>My Board:
+              </thead>
+              <% for(let row in user.board) { %>
+              <tr class='myRow'>
+                <% for(let node in user.board[row]) { %>
+                <td class='myData' id=<%=row + node%>>
+                  <% if(user.board[row][node] === 0) {%>
+                  -
+                  <%} else {%>
+                  <%=user.board[row][node] %>
+                  <% }%>
+                </td>
+                <% } %>
+              </tr>
+              <% } %>
+            </table>
+            <aside>
+              <%=error%>
+            </aside>
+          </div>
   </table>
-</td>
-</tr>
-  <table class='board table table-bordered' id=<%=number%> >
-    <thead>Opponent's Board: </thead>
+  </td>
+  </tr>
+  <table class='board table table-bordered op-board' id=<%=number%>>
+    <thead>Opponent's Bo ard: </thead>
     <% for(let row in user.opBoard) { %>
     <tr class='board-row'>
       <% for(let node in user.opBoard[row]) { %>
@@ -109,11 +133,13 @@
     <% } %>
 
   </table>
+  </div>
   <div>
     <form class='text-center' name='ready'>
       <button id='btnReady' class='btn-danger' autofocus></button>
     </form>
   </div>
+
 </body>
 
 </html>
