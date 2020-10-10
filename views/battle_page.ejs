@@ -8,13 +8,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <!-- <link rel='stylesheet' href='../styles/main.css'> -->
-  <script>
-    function fRefresh() {
-      setInterval(() => {
-        location.reload();
-      }, 3300);
-    }
-  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <style>
     .board-node {
       background-color: skyblue;
@@ -23,6 +17,7 @@
       margin: 0;
       padding: 0;
     }
+
     .myContainer {
       width: 300px;
       height: 300px;
@@ -59,35 +54,166 @@
       align-items: center;
     }
 
-    .op-board {
+    table button {
+      width: 50px;
+      height: 50px;
+    }
+
+    .op-container {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
       width: 550px;
       height: 550px;
+      margin: 0;
+      padding: 0;
+      border: solid rgb(247, 247, 247) 2px;
+      background-color: rgb(63, 58, 58);
+    }
+
+    .op-container div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+
+    .my-container {
+      border: solid teal 2px;
+      background-color: rgb(87, 135, 155);
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+
+    }
+
+    .my-container div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hover-op {
+      color: grey;
+      background-color: rgba(200, 200, 200, 0.2);
+    }
+
+    .miss-node {
+      color: rgb(238, 124, 124);
+      background-color: rgba(238, 124, 124, 0.2);
+
+    }
+
+    .hit-node {
+      color: rgb(129, 224, 129);
+      background-color: rgba(129, 224, 129, 0.2);
     }
   </style>
+  <script>
+    // $(document).ready(function() {
+    //   $('form').on('submit', function (event) {
+    //     event.preventDefault();
+    //     console.log(event.target.id);
+    //     $.ajax({ method: 'PUT', url: `/battle/${event.target.id}`, data: `${event.target.id}` })
+    //       .done(() => {
+    //         $.ajax('/board', { method: 'GET' }).done((data) => {
+    //           console.log(data);
+    //         })
+    //       })
+    //   })
+    // });
+    $(document).ready(function () {
+      $.ajax('/board', { method: 'GET' }).done((data) => {
+        console.log(data);
+        renderBoard(data.myBoard, true);
+        renderBoard(data.opBoard, false);
+      });
+      setInterval(() => {
+        $.ajax('/board', { method: 'GET' }).done((data) => {
+          renderBoard(data.myBoard, true);
+          renderBoard(data.opBoard, false);
+          if (data.url)
+            window.location.href = data.url
+          console.log(data);
+        });
 
+      }, 1000);
+      function getTheBoards(event) {
+        $.ajax({ method: 'PUT', url: `/battle/${event.target.id}`, data: `${event.target.id}` })
+          .done(() => {
+            $.ajax('/board', { method: 'GET' }).done((data) => {
+              renderBoard(data.myBoard, true);
+              renderBoard(data.opBoard, false);
+            });
+          });
+      }
+
+      const renderBoard = (board, mine) => {
+        const whom = mine ? 'my' : 'op';
+        $(`.${whom}-container`).empty();
+        $con = $(`.${whom}-container`)
+        for (let row in board) {
+          for (let col in board[row]) {
+            const $newDiv = $('<div>').text(board[row][col]);
+            $($newDiv).attr('id', `${row}${col}`);
+            if (board[row][col] === 'X') $newDiv.addClass('hit-node');
+            if (board[row][col] === 'O') $newDiv.addClass('miss-node');
+            if (!mine) {
+              $($newDiv).hover(function () {
+                $(this).addClass('hover-op');
+              }, function () {
+                $(this).removeClass('hover-op');
+              }
+              );
+              if (board[row][col] !== 'X' && board[row][col] !== 'O')
+                $newDiv.click((event) => getTheBoards(event));
+            }
+            $con.append($newDiv);
+          }
+        }
+      };
+    });
+// $('form').on('submit', function (event) {
+      //   event.preventDefault();
+      //   console.log(event.target.id);
+      //   $.ajax({ method: 'PUT', url: `/battle/${event.target.id}`, data: `${event.target.id}` })
+      //     .done(() => {
+      //       $.ajax('/board', { method: 'GET' }).done((data) => {
+      //         console.log(data);
+      //       });
+      //     });
+      // });
+      // mine = true if no hover animation
+      // cls = css classname 
+
+    // function fRefresh() {
+    //   setInterval(() => {
+    //     location.reload();
+    //   }, 3300);
+    // }
+
+  </script>
 </head>
 
-<body onload='fRefresh()'>
+<body>
   <header>
     <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
       <a class="navbar-brand" href="/">Battleship</a>
     </nav>
   </header>
   <div class='battle-container'>
-  <table>
-    <tr>
-      <td><span>
-          <ol>
-            <strong>Battle Log:</strong>
-            <% for(let i = 0; i < battleLog.length; i++) {%>
-            <li><%= battleLog[i].desc%></li>
-            <% } %>
-          </ol>
-        </span>
-      </td>
-      <td>
-        
-          <div class='myContainer'>
+    <table>
+      <tr>
+        <td><span>
+            <ol>
+              <strong>Battle Log:</strong>
+              <% for(let i = 0; i < battleLog.length; i++) {%>
+              <li><%= battleLog[i].desc%></li>
+              <% } %>
+            </ol>
+          </span>
+        </td>
+        <td>
+
+          <div class='myContainer my-container'>
             <table class='myTable'>
               <thead>My Board:
               </thead>
@@ -109,30 +235,32 @@
               <%=error%>
             </aside>
           </div>
-  </table>
-  </td>
-  </tr>
-  <table class='board table table-bordered op-board' id=<%=number%>>
-    <thead>Opponent's Bo ard: </thead>
-    <% for(let row in user.opBoard) { %>
-    <tr class='board-row'>
-      <% for(let node in user.opBoard[row]) { %>
-      <td class='board-node' id=<%=row + node%>>
-        <form method='POST' action='/battle/<%=row + node%>?_method=PUT'>
-          <button style="height:100%; width:100%;" class='btn-info'>
-            <% if(user.opBoard[row][node] === 0) {%>
-            -
-            <%} else {%>
-            <%=user.opBoard[row][node] %>
-            <% }%>
-          </button>
-        </form>
-      </td>
-      <% } %>
+    </table>
+    </td>
     </tr>
-    <% } %>
+    <section class='op-container'>
+      <table class='board table table-bordered op-board' id=<%=number%>>
+        <thead>Opponent's Board: </thead>
+        <% for(let row in user.opBoard) { %>
+        <tr class='board-row'>
+          <% for(let node in user.opBoard[row]) { %>
+          <td class='board-node'>
+            <form method='POST' id=<%=row + node%>>
+              <button style="height:100%; width:100%;" type='submit' class='btn-info'>
+                <% if(user.opBoard[row][node] === 0) {%>
+                -
+                <%} else {%>
+                <%=user.opBoard[row][node] %>
+                <% }%>
+              </button>
+            </form>
+          </td>
+          <% } %>
+        </tr>
+        <% } %>
 
-  </table>
+      </table>
+    </section>
   </div>
   <div>
     <form class='text-center' name='ready'>

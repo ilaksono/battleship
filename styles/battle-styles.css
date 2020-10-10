@@ -1,1 +1,25 @@
+.op-container {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  width: 550px;
+  height: 550px;
+  margin: 0;
+  padding: 0;
+  border: solid skyblue 2px;
+}
+.my-container {
+  border: solid teal 2px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
 
+}
+.hover-op {
+  color: grey;
+}
+.miss-node {
+  color: rgb(238, 124, 124);
+  
+}
+.hit-node {
+  color: rgb(129, 224, 129);
+}

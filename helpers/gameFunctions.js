@@ -164,8 +164,10 @@ module.exports = (users, overallState, battleLog) => {
           this.currentShipOrient = 'H';
       },
     };
-
-    battleLog = [];
+    for(const i = 0; i < battleLog.length; i++) {
+      battleLog.shift();
+      i--;
+    }
 
     let ships2Available = [
       {

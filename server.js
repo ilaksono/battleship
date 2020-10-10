@@ -15,7 +15,6 @@ app.use(cookieSession({
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 app.use(methodOverride('_method'));
 
 const whichPlayer = (userDB, playerID) => {
@@ -149,8 +148,26 @@ app.post('/set/ready', (req, res) => {
 });
 
 app.get('/board', (req, res) => {
-  res.json(users[req.params.userID].board)
-})
+  player = req.session.userID;
+  const opponent = req.session.userID === 'Player 1' ? 'Player 2' : 'Player 1';
+  if (gameHelpers.allShipsSunk(opponent)) {
+    const templateVars = {
+      user: req.session.userID,
+      error: `${player} has won!`
+    };
+    return res.json({ url: '/play_again' }).render('play_again', templateVars);
+
+  }
+  else if (gameHelpers.allShipsSunk(player)) {
+    const templateVars = {
+      user: req.session.userID,
+      error: `${opponent} has won!`
+    };
+    return res.json({ url: '/play_again' }).render('play_again', templateVars);
+  }
+
+  res.json({ myBoard: users[req.session.userID].board, opBoard: users[req.session.userID].opBoard, battleLog });
+});
 
 app.get('/battle', (req, res) => {
 
@@ -194,7 +211,12 @@ app.put('/battle/:node', (req, res) => {
             users['Player 1'].state.phase = 'end';
             users['Player 2'].state.phase = 'end';
             desc += `${player} has won!`;
-            return res.send(`${player} has won!`);
+            // return res.send(`${player} has won!`);
+            const templateVars = {
+              user: req.session.userID,
+              error: `${player} has won!`
+            };
+            return res.render('play_again', templateVars);
           }
         }
       }
@@ -207,20 +229,51 @@ app.put('/battle/:node', (req, res) => {
         },
         desc
       });
+      // return res.redirect('/board');
       return res.redirect('/battle');
     } else {
-      res.render('battle_page', {
+      return res.render('battle_page', {
         error: `Waiting on ${opponent}`, user,
         number: `board${req.session.userID[7]}`,
         battleLog
       });
     }
   }
-  res.send('You lost');
+  else {
+    const templateVars = {
+      user: req.session.userID,
+      error: `${player} has lost!`
+    };
+    return res.render('play_again', templateVars);
+  }
+});
+app.get('/play_again', (req, res) => {
+  player = req.session.userID;
+  const opponent = req.session.userID === 'Player 1' ? 'Player 2' : 'Player 1';
+  if (gameHelpers.allShipsSunk(opponent)) {
+    const templateVars = {
+      user: req.session.userID,
+      error: `${player} has won!`
+    };
+    return res.render('play_again', templateVars);
+
+  }
+  else if (gameHelpers.allShipsSunk(player)) {
+    const templateVars = {
+      user: req.session.userID,
+      error: `${opponent} has won!`
+    };
+    return res.render('play_again', templateVars);
+  }
+
+
 });
 
 app.get('/play-again', (req, res) => {
+  console.log(battleLog);
   gameHelpers.playAgain();
+  console.log(battleLog);
+
   res.redirect('/set');
 });
 
