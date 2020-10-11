@@ -36,24 +36,24 @@ app.post('/register', (req, res) => {
   users[player].name = username;
   users[player].board = gameHelpers.generateBoard(10);
   users[player].state.phase = 'set';
-  console.log(req.session.userID);
+  // console.log(req.session.userID);
   if (player === 'Player 1') {
     const heartBeat1 = setInterval(() => {
-      console.log(`player 1 heart: ${users['Player 1'].heart}`);
+      // console.log(`player 1 heart: ${users['Player 1'].heart}`);
       if (gameHelpers.calculateTime(users['Player 1'].heart) > 15000) {
         gameHelpers.resetAll();
         clearInterval(heartBeat1);
-        console.log('player 1 booted for inactivity');
+        // console.log('player 1 booted for inactivity');
       }
     }, 15000);
   }
   else if (player === 'Player 2') {
     const heartbeat2 = setInterval(() => {
-      console.log(`player 2 heart: ${users['Player 2'].heart}`);
+      // console.log(`player 2 heart: ${users['Player 2'].heart}`);
       if (gameHelpers.calculateTime(users['Player 2'].heart) > 15000) {
         gameHelpers.resetAll();
         clearInterval(heartbeat2);
-        console.log('player 2 booted for inactivity');
+        // console.log('player 2 booted for inactivity');
 
       }
     }, 15000);
@@ -228,9 +228,9 @@ app.put('/battle/:node', (req, res) => {
       let desc = `${player} shoots at ${gameHelpers.convertToBoardNotation(cellID)}: ${hit ? 'HIT' : 'MISS'} `;
       if (hit) {
         if (gameHelpers.sunkShip(hit, users[opponent].board)) {
-          console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
+          // console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
           users[opponent].ships[hit.charCodeAt(0) - 65].sunk = true;
-          console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
+          // console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
           desc += `\n${player} has sunk a ${gameHelpers.getShipByCode(hit, player).name}`;
           if (gameHelpers.allShipsSunk(opponent)) {
             users['Player 1'].state.phase = 'end';
