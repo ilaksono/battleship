@@ -199,6 +199,8 @@ app.get('/battle', (req, res) => {
   let opponent;
   if (req.session.userID === 'Player 1') opponent = users['Player 2'];
   else opponent = users['Player 1'];
+  if (users['Player 1'].state.phase !== 'battle' || users['Player 2'].state.phase !== 'battle')
+    return res.redirect('/');
   const user = users[req.session.userID];
   const templateVars = {
     user,
@@ -246,7 +248,7 @@ app.put('/battle/:node', (req, res) => {
         }
       }
       const cpy1 = gameHelpers.createBoardCopy(users['Player 1'].opBoard);
-      const cpy2 = gameHelpers.createBoardCopy(users['Player 2'].opBoard); 
+      const cpy2 = gameHelpers.createBoardCopy(users['Player 2'].opBoard);
       battleLog.push({
         turn: battleLog.length + 1,
         boardState: {
@@ -301,7 +303,7 @@ app.get('/heart', (req, res) => {
 });
 app.get('/plays', (req, res) => {
   res.json(battleLog);
-})
+});
 
 app.get('/play-again', (req, res) => {
   gameHelpers.playAgain();
