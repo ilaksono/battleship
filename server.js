@@ -54,7 +54,6 @@ app.post('/register', (req, res) => {
         gameHelpers.resetAll();
         clearInterval(heartbeat2);
         // console.log('player 2 booted for inactivity');
-
       }
     }, 15000);
   }

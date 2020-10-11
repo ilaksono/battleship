@@ -13,7 +13,7 @@
     $(document).ready(() => {
       setInterval(() => {
         $.ajax('/heart', { method: 'GET' })
-      }, 3000);
+      }, 5000);
       $.ajax('/plays', { method: 'GET' }).done(data => {
         renderReplays(data);
         console.log(data);

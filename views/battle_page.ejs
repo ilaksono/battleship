@@ -130,8 +130,7 @@
       setInterval(() => {
         $.ajax('/heart', { method: 'GET' });
         $('.error-msg').empty();
-
-      }, 3000);
+      }, 5000);
       $.ajax('/board', { method: 'GET' }).done((data) => {
         // console.log(data);
         renderBoard(data.myBoard, true);
