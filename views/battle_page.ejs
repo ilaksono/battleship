@@ -128,7 +128,7 @@
 
       }, 3000);
       $.ajax('/board', { method: 'GET' }).done((data) => {
-        console.log(data);
+        // console.log(data);
         renderBoard(data.myBoard, true);
         renderBoard(data.opBoard, false);
       });
@@ -138,7 +138,7 @@
           renderBoard(data.opBoard, false);
           if (data.url)
             window.location.href = data.url
-          console.log(data);
+          // console.log(data);
         });
 
       }, 1000);
@@ -212,60 +212,16 @@
           </div>
 
           <div class='myContainer my-container'>
-            <table class='myTable'>
-              <thead>My Board:
-              </thead>
-              <% for(let row in user.board) { %>
-              <tr class='myRow'>
-                <% for(let node in user.board[row]) { %>
-                <td class='myData' id=<%=row + node%>>
-                  <% if(user.board[row][node] === 0) {%>
-                  -
-                  <%} else {%>
-                  <%=user.board[row][node] %>
-                  <% }%>
-                </td>
-                <% } %>
-              </tr>
-              <% } %>
-            </table>
-            <aside>
-              <%=error%>
-            </aside>
           </div>
     </table>
     </td>
     </tr>
     <section class='op-container'>
       <table class='board table table-bordered op-board' id=<%=number%>>
-        <thead>Opponent's Board: </thead>
-        <% for(let row in user.opBoard) { %>
-        <tr class='board-row'>
-          <% for(let node in user.opBoard[row]) { %>
-          <td class='board-node'>
-            <form method='POST' id=<%=row + node%>>
-              <button style="height:100%; width:100%;" type='submit' class='btn-info'>
-                <% if(user.opBoard[row][node] === 0) {%>
-                -
-                <%} else {%>
-                <%=user.opBoard[row][node] %>
-                <% }%>
-              </button>
-            </form>
-          </td>
-          <% } %>
-        </tr>
-        <% } %>
-
+  
       </table>
     </section>
   </div>
-  <div>
-    <form class='text-center' name='ready'>
-      <button id='btnReady' class='btn-danger' autofocus></button>
-    </form>
-  </div>
-
 </body>
 
 </html>

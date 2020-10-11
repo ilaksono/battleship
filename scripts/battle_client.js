@@ -17,11 +17,11 @@ $(document).ready(function () {
 
   $('form').on('submit', function (event) {
     event.preventDefault();
-    console.log(event.target.id);
+    // console.log(event.target.id);
     $.ajax({ method: 'PUT', url: `/battle/${event.target.id}`, data: `${event.target.id}` })
       .done(() => {
         $.ajax('/board', { method: 'GET' }).done((data) => {
-          console.log(data);
+          // console.log(data);
         });
       });
   });

@@ -11,10 +11,37 @@
   <style>
     .board-node {
       background-color: skyblue;
-      width: 40px;
-      height: 40px;
+      width: 10%;
+      height: 100%;
       margin: 0;
       padding: 0;
+    }
+    tr {
+      height: 10%;
+      width: 100%;
+    }
+    table button {
+      height: 100%;
+      width: 100%;
+    }
+    .container {
+      display: flex;
+      height: 500px;
+      width: 500px;
+      justify-content: center;
+    }
+    .board {
+      justify-self: center;
+      padding: 0;
+      margin: 0;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        width: 80vmin;
+        height: 80vmin;
+      }
     }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -51,8 +78,8 @@
   </p>
   <% } %>
 
+  <div class='container'>
   <table class='board table table-bordered' id=<%=number%>>
-    <div class='container'>
       <% for (let row in user.board) { %>
       <tr class='board-row'>
         <% for (let node in user.board[row]) { %>
@@ -73,11 +100,6 @@
 
     </div>
   </table>
-  <div>
-    <form class='text-center' method='POST' action='/set/ready' name='ready'>
-      <button id='btnReady' class='btn-danger'>Ready</button>
-    </form>
-  </div>
 </body>
 
 </html>

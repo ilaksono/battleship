@@ -2,7 +2,7 @@ module.exports = (users, overallState, battleLog) => {
 
 
   const allShipsSunk = (player) => {
-    console.log(users[player].ships);
+    // console.log(users[player].ships);
     for (const ship of users[player].ships)
       if (ship.sunk === false) return false;
 
