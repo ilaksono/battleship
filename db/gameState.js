@@ -131,8 +131,8 @@ const overallState = {
 };
 
 const users = {
-  "Player 1": { name: '', id: '', board: [], opBoard: [], state: game1State, moves: [], hits: [], ships: ships1Available },
-  "Player 2": { name: '', id: '', board: [], opBoard: [], state: game2State, moves: [], hits: [], ships: ships2Available }
+  "Player 1": { name: '', id: '', board: [], opBoard: [], state: game1State, moves: [], hits: [], ships: ships1Available, heart: '' },
+  "Player 2": { name: '', id: '', board: [], opBoard: [], state: game2State, moves: [], hits: [], ships: ships2Available, heart: '' }
 };
 
-module.exports = { users, overallState, battleLog }
+module.exports = { users, overallState, battleLog };

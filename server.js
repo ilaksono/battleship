@@ -37,16 +37,43 @@ app.post('/register', (req, res) => {
   users[player].board = gameHelpers.generateBoard(10);
   users[player].state.phase = 'set';
   console.log(req.session.userID);
+  if (player === 'Player 1') {
+    const heartBeat1 = setInterval(() => {
+      console.log(`player 1 heart: ${users['Player 1'].heart}`);
+      if (gameHelpers.calculateTime(users['Player 1'].heart) > 15000) {
+        gameHelpers.resetAll();
+        clearInterval(heartBeat1);
+        console.log('player 1 booted for inactivity');
+      }
+    }, 15000);
+  }
+  else if (player === 'Player 2') {
+    const heartbeat2 = setInterval(() => {
+      console.log(`player 2 heart: ${users['Player 2'].heart}`);
+      if (gameHelpers.calculateTime(users['Player 2'].heart) > 15000) {
+        gameHelpers.resetAll();
+        clearInterval(heartbeat2);
+        console.log('player 2 booted for inactivity');
+
+      }
+    }, 15000);
+  }
   res.redirect('/');
 });
 
 app.get('/', (req, res) => {
   if (!(users['Player 1'].name && users['Player 2'].name)) {
     if (req.session.userID === users['Player 1'].id || req.session.userID === users['Player 2'].id)
-      return res.send('Please wait for other player');
+      return res.render('waiting_page');
     return res.redirect('/register');
   }
-  res.redirect('/set');
+  if (users['Player 1'].state.phase === 'set' && users['Player 2'].state.phase === 'set') res.redirect('/set');
+  if (users['Player 1'].state.phase === 'set' || users['Player 2'].state.phase === 'set') {
+    if (users[req.session.userID].state.phase === 'battle')
+      return res.render('waiting_page');
+  }
+  if (users['Player 1'].state.phase === 'battle' && users['Player 2'].state.phase === 'battle') res.redirect('/battle');
+
 });
 
 app.post('/', (req, res) => {
@@ -63,8 +90,6 @@ app.get('/set', (req, res) => {
   };
   res.render('set_page', templateVars);
 });
-
-
 
 app.put('/set/:node', (req, res) => {
   let player = req.session.userID;
@@ -166,7 +191,7 @@ app.get('/board', (req, res) => {
     return res.json({ url: '/play_again' }).render('play_again', templateVars);
   }
 
-  res.json({ myBoard: users[req.session.userID].board, opBoard: users[req.session.userID].opBoard, battleLog });
+  res.status(200).json({ myBoard: users[req.session.userID].board, opBoard: users[req.session.userID].opBoard, battleLog });
 });
 
 app.get('/battle', (req, res) => {
@@ -181,7 +206,7 @@ app.get('/battle', (req, res) => {
     error: '',
     battleLog
   };
-  res.render('battle_page', templateVars);
+  res.status(200).render('battle_page', templateVars);
 
 });
 app.get('/db.json', (req, res) => {
@@ -216,23 +241,24 @@ app.put('/battle/:node', (req, res) => {
               user: req.session.userID,
               error: `${player} has won!`
             };
-            return res.render('play_again', templateVars);
+            return res.status(200).render('play_again', templateVars);
           }
         }
       }
-      console.log(desc);
+      const cpy1 = gameHelpers.createBoardCopy(users['Player 1'].opBoard);
+      const cpy2 = gameHelpers.createBoardCopy(users['Player 2'].opBoard); 
       battleLog.push({
         turn: battleLog.length + 1,
         boardState: {
-          'Player 1': users['Player 1'].opBoard,
-          'Player 2': users['Player 2'].opBoard
+          'Player 1': cpy1,
+          'Player 2': cpy2
         },
         desc
       });
       // return res.redirect('/board');
-      return res.redirect('/battle');
+      return res.status(200).redirect('/battle');
     } else {
-      return res.render('battle_page', {
+      return res.status(400).json({
         error: `Waiting on ${opponent}`, user,
         number: `board${req.session.userID[7]}`,
         battleLog
@@ -269,10 +295,16 @@ app.get('/play_again', (req, res) => {
 
 });
 
+app.get('/heart', (req, res) => {
+  users[req.session.userID].heart = new Date().getTime();
+  res.json({ time: users[req.session.userID].heart });
+});
+app.get('/plays', (req, res) => {
+  res.json(battleLog);
+})
+
 app.get('/play-again', (req, res) => {
-  console.log(battleLog);
   gameHelpers.playAgain();
-  console.log(battleLog);
 
   res.redirect('/set');
 });

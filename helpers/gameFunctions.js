@@ -147,6 +147,11 @@ module.exports = (users, overallState, battleLog) => {
     return arr;
   };
 
+  const calculateTime = (time) => {
+    const now = new Date().getTime();
+    return now - time;
+  }
+
   const convertToBoardNotation = coord => `${String.fromCharCode(65 + Number(coord[1]))}${Number(coord[0]) + 1}`;
 
   const playAgain = () => {
@@ -279,8 +284,8 @@ module.exports = (users, overallState, battleLog) => {
         orientation: null
       }
     ];
-    users["Player 1"] = { name: users['Player 1'].name, id: 'Player 1', board: generateBoard(10), opBoard: generateBoard(10), state: game1State, moves: [], hits: [], ships: ships1Available },
-      users["Player 2"] = { name: users['Player 2'].name, id: 'Player 2', board: generateBoard(10), opBoard: generateBoard(10), state: game2State, moves: [], hits: [], ships: ships2Available };
+    users["Player 1"] = { name: users['Player 1'].name, id: 'Player 1', board: generateBoard(10), opBoard: generateBoard(10), state: game1State, moves: [], hits: [], ships: ships1Available, heart: "" },
+      users["Player 2"] = { name: users['Player 2'].name, id: 'Player 2', board: generateBoard(10), opBoard: generateBoard(10), state: game2State, moves: [], hits: [], ships: ships2Available, heart: "" };
   };
   const resetAll = () => {
 
@@ -299,7 +304,10 @@ module.exports = (users, overallState, battleLog) => {
       },
     };
 
-    battleLog = [];
+    for(const i = 0; i < battleLog.length; i++) {
+      battleLog.shift();
+      i--;
+    }
 
     let ships2Available = [
       {
@@ -416,9 +424,18 @@ module.exports = (users, overallState, battleLog) => {
       // phases 0: register, 0.5: registerDone, 1:set, 1.5: setDone, 2: battle, 3: end
     };
 
-    users["Player 1"] = { name: '', id: '', board: [], opBoard: [], state: game1State, moves: [], hits: [], ships: ships1Available };
-    users["Player 2"] = { name: '', id: '', board: [], opBoard: [], state: game2State, moves: [], hits: [], ships: ships2Available };
+    users["Player 1"] = { name: '', id: '', board: [], opBoard: [], state: game1State, moves: [], hits: [], ships: ships1Available, heart: "" };
+    users["Player 2"] = { name: '', id: '', board: [], opBoard: [], state: game2State, moves: [], hits: [], ships: ships2Available, heart: "" };
   };
+
+  const createBoardCopy = board => {
+    let arr = [];
+    for(let a of board) {
+      let temp = [...a];
+      arr.push(temp);
+    }
+    return arr;
+  }
 
 
 
@@ -440,7 +457,9 @@ module.exports = (users, overallState, battleLog) => {
     resetAll,
     isHorizontalRestricted,
     isVerticalRestricted,
-    placeShipsVertical
+    placeShipsVertical,
+    calculateTime,
+    createBoardCopy
   };
 };
 //trying promises

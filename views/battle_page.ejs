@@ -11,11 +11,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <style>
     .board-node {
-      background-color: skyblue;
-      width: 10%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
+      border: solid teal 1px;
+      font-size: 0.8em;
     }
 
     .myContainer {
@@ -62,6 +59,7 @@
     .op-container {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
+      grid-template-rows: repeat(10, 1fr);
       width: 550px;
       height: 550px;
       margin: 0;
@@ -75,7 +73,6 @@
       align-items: center;
       justify-content: center;
     }
-
 
     .my-container {
       border: solid teal 2px;
@@ -106,21 +103,30 @@
       color: rgb(129, 224, 129);
       background-color: rgba(129, 224, 129, 0.2);
     }
+
+    @media (max-width: 768px) {
+      .battle-container {
+        flex-direction: column;
+      }
+
+      .my-container {
+        width: 200px;
+        height: 200px;
+      }
+
+      .op-container {
+        height: 400px;
+        width: 400px;
+      }
+    }
   </style>
   <script>
-    // $(document).ready(function() {
-    //   $('form').on('submit', function (event) {
-    //     event.preventDefault();
-    //     console.log(event.target.id);
-    //     $.ajax({ method: 'PUT', url: `/battle/${event.target.id}`, data: `${event.target.id}` })
-    //       .done(() => {
-    //         $.ajax('/board', { method: 'GET' }).done((data) => {
-    //           console.log(data);
-    //         })
-    //       })
-    //   })
-    // });
     $(document).ready(function () {
+      setInterval(() => {
+        $.ajax('/heart', { method: 'GET' });
+        $('.error-msg').empty();
+
+      }, 3000);
       $.ajax('/board', { method: 'GET' }).done((data) => {
         console.log(data);
         renderBoard(data.myBoard, true);
@@ -137,12 +143,17 @@
 
       }, 1000);
       function getTheBoards(event) {
+        $('.error-msg').empty();
         $.ajax({ method: 'PUT', url: `/battle/${event.target.id}`, data: `${event.target.id}` })
           .done(() => {
             $.ajax('/board', { method: 'GET' }).done((data) => {
               renderBoard(data.myBoard, true);
               renderBoard(data.opBoard, false);
             });
+          }).fail(xhr => {
+            $('.error-msg').text(xhr.responseJSON.error);
+            if ($('.error-msg').is(':hidden'))
+              $('.error-msg').slideDown('fast');
           });
       }
 
@@ -152,8 +163,9 @@
         $con = $(`.${whom}-container`)
         for (let row in board) {
           for (let col in board[row]) {
-            const $newDiv = $('<div>').text(board[row][col]);
-            $($newDiv).attr('id', `${row}${col}`);
+            const txt = board[row][col] === 0 ? '' : board[row][col];
+            const $newDiv = $('<div>').text(txt);
+            $($newDiv).attr('id', `${row}${col}`).addClass('board-node');
             if (board[row][col] === 'X') $newDiv.addClass('hit-node');
             if (board[row][col] === 'O') $newDiv.addClass('miss-node');
             if (!mine) {
@@ -170,26 +182,14 @@
           }
         }
       };
+
+      $('.btn-battle-log').click(() => {
+        if ($('.battle-log').is(':hidden'))
+          $('.battle-log').show();
+        else
+          $('.battle-log').hide();
+      })
     });
-// $('form').on('submit', function (event) {
-      //   event.preventDefault();
-      //   console.log(event.target.id);
-      //   $.ajax({ method: 'PUT', url: `/battle/${event.target.id}`, data: `${event.target.id}` })
-      //     .done(() => {
-      //       $.ajax('/board', { method: 'GET' }).done((data) => {
-      //         console.log(data);
-      //       });
-      //     });
-      // });
-      // mine = true if no hover animation
-      // cls = css classname 
-
-    // function fRefresh() {
-    //   setInterval(() => {
-    //     location.reload();
-    //   }, 3300);
-    // }
-
   </script>
 </head>
 
@@ -197,21 +197,19 @@
   <header>
     <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
       <a class="navbar-brand" href="/">Battleship</a>
+      <button class='btn-battle-log'>Battle Log</button>
+      <section class='battle-log'></section>
     </nav>
   </header>
   <div class='battle-container'>
     <table>
       <tr>
-        <td><span>
-            <ol>
-              <strong>Battle Log:</strong>
-              <% for(let i = 0; i < battleLog.length; i++) {%>
-              <li><%= battleLog[i].desc%></li>
-              <% } %>
-            </ol>
-          </span>
-        </td>
         <td>
+          <div>
+            <span class='error-msg'>
+
+            </span>
+          </div>
 
           <div class='myContainer my-container'>
             <table class='myTable'>

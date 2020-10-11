@@ -8,21 +8,69 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <!-- <link rel='stylesheet' href='../styles/main.css'> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(() => {
+      setInterval(() => {
+        $.ajax('/heart', { method: 'GET' })
+      }, 3000);
+      $.ajax('/plays', { method: 'GET' }).done(data => {
+        renderReplays(data);
+        console.log(data);
+      })
+      const renderReplays = (battleLog) => {
+        for (let i = 0; i < battleLog.length; i++) {
+          let $entry = $('<div>').addClass('log-entry');
+          $turn = $('<span>').text(i + 1);
+          let $board1 = renderBoardItem(battleLog[i].boardState['Player 1']);
+          let $board2 = renderBoardItem(battleLog[i].boardState['Player 2']);
+          let $newDesc = renderDesc(battleLog[i].desc)
+          $entry.append($turn).append($board1).append($board2).append($newDesc);
+          $('.replay-log').append($entry);
+        }
+      };
+      const renderDesc = (str) => {
+        const $newSpan = $('<span>').text(str);
+        return $newSpan;
+      }
+      const renderBoardItem = board => {
+        const $newBoard = $('<div>').addClass('board-entry');
+        for (let row in board) {
+          for (let col in board[row]) {
+            const txt = board[row][col] === 0 ? ' ' : board[row][col];
+            const $newDiv = $('<div>').text(txt).addClass('board-node');
+            if (board[row][col] === 'X') $newDiv.addClass('hit-node');
+            if (board[row][col] === 'O') $newDiv.addClass('miss-node');
+            $newBoard.append($newDiv);
+          }
+        }
+        return $newBoard;
+      };
+
+
+    });
+  </script>
   <style>
     .board-node {
-      background-color: skyblue;
-      width: 40px;
-      height: 40px;
-      margin: 0;
-      padding: 0;
+      font-size: 0.8em;
+      border: solid teal 1px;
+    }
+    .log-entry {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
     }
 
-    .myTable {
-      background-color: blue;
-      width: 100%;
-      height: 100%;
-      margin: 0 auto;
-      border: 1px solid black;
+    .board-entry {
+      display: grid;
+      
+      grid-template-columns: repeat(10, 1fr);
+      grid-template-rows: repeat(10, 1fr);
+      border: solid teal 2px;
+      background-color: rgb(87, 135, 155);
+      width: 200px;
+      height: 200px;
     }
 
     .myContainer {
@@ -30,6 +78,17 @@
       height: 180px;
       display: block;
       text-align: center;
+    }
+
+    .miss-node {
+      color: rgb(238, 124, 124);
+      background-color: rgba(238, 124, 124, 0.2);
+
+    }
+
+    .hit-node {
+      color: rgb(129, 224, 129);
+      background-color: rgba(129, 224, 129, 0.2);
     }
 
     .myRow {
@@ -43,6 +102,11 @@
       width: 20px;
       border: 1px solid black;
     }
+
+    .replay-log {
+      display: flex;
+      flex-direction: column;
+    }
   </style>
 </head>
 
@@ -52,89 +116,9 @@
       <a class="navbar-brand" href="/">Battleship</a>
     </nav>
   </header>
-  <table>
-    <thead>
-      <strong>Game Replay:</strong></thead>
 
-    <% for(let i = 0; i < battleLog.length; i++) {%>
-    <tr>
-      <td>
-        Turn <%= battleLog[i].turn%>
-        <%= battleLog[i].desc%>
-
-      </td>
-
-      <td>
-        <div class='myContainer'>
-          <table class='myTable'>
-            <thead>Player 1:
-            </thead>
-            <% for(let row in battleLog.boardState['Player 1']) { %>
-            <tr class='myRow'>
-              <% for(let node in battleLog.boardState['Player 1'][row]) { %>
-              <td class='myData' id=<%=row + node%>>
-                <% if(battleLog.boardState['Player 1'][row][node] === 0) {%>
-                -
-                <%} else {%>
-                <%=battleLog.boardState['Player 1'][row][node] %>
-                <% }%>
-              </td>
-              <% } %>
-            </tr>
-            <% } %>
-          </table>
-        </div>
-      </td>
-      <td>
-        <div class='myContainer'>
-          <table class='myTable'>
-            <thead>Player 2:
-            </thead>
-            <% for(let row in battleLog.boardState['Player 2']) { %>
-            <tr class='myRow'>
-              <% for(let node in battleLog.boardState['Player 2'][row]) { %>
-              <td class='myData' id=<%=row + node%>>
-                <% if(battleLog.boardState['Player 2'][row][node] === 0) {%>
-                -
-                <%} else {%>
-                <%=battleLog.boardState['Player 2'][row][node] %>
-                <% }%>
-              </td>
-              <% } %>
-            </tr>
-            <% } %>
-          </table>
-        </div>
-      </td>
-    </tr>
-  </table>
-  <% } %>
-  <!-- <table class='board table table-bordered' id=<%=number%> >
-    <thead>Opponent's Board: </thead>
-    <% for(let row in user.opBoard) { %>
-    <tr class='board-row'>
-      <% for(let node in user.opBoard[row]) { %>
-      <td class='board-node' id=<%=row + node%>>
-        <form method='POST' action='/battle/<%=row + node%>?_method=PUT'>
-          <button style="height:100%; width:100%;" class='btn-info'>
-            <% if(user.opBoard[row][node] === 0) {%>
-            -
-            <%} else {%>
-            <%=user.opBoard[row][node] %>
-            <% }%>
-          </button>
-        </form>
-      </td>
-      <% } %>
-    </tr>
-    <% } %>
-
-  </table> -->
-  <div>
-    <form class='text-center' name='ready'>
-      <button id='btnReady' class='btn-danger' autofocus></button>
-    </form>
-  </div>
+  <section class='replay-log'>
+  </section>
 </body>
 
 </html>

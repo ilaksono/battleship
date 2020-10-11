@@ -17,6 +17,14 @@
       padding: 0;
     }
   </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(() => {
+      setInterval(() => {
+        $.ajax('/heart', { method: 'GET' })
+      }, 3000);
+    })
+  </script>
 </head>
 
 <body>
@@ -43,8 +51,8 @@
   </p>
   <% } %>
 
-  <table  class='board table table-bordered' id=<%=number%>>
-    <div class='container'> 
+  <table class='board table table-bordered' id=<%=number%>>
+    <div class='container'>
       <% for (let row in user.board) { %>
       <tr class='board-row'>
         <% for (let node in user.board[row]) { %>

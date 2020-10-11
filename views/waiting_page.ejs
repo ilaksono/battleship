@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lobby</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <script>
+    $(document).ready(() => {
+      setInterval(() => {
+        $.ajax('/heart', { method: 'GET' })
+      }, 3000);
+      setInterval(() => {
+        location.reload();
+      }, 5000);
+    })
+  </script>
+</head>
+
+<body style='display: flex; text-align: center; justify-content:center;'>
+  Waiting for other player.
+</body>
+
+</html>
