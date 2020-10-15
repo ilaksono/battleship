@@ -116,6 +116,16 @@
     .miss-node {
       color: rgb(238, 124, 124);
       background-color: rgba(238, 124, 124, 0.2);
+    }
+    .my-tag {
+      position: absolute;
+      top: 150px;
+      left: 150px;
+    }
+    .oppo-tag {
+      position: absolute;
+      top: 65px;
+      left: 40%;
 
     }
 
@@ -223,7 +233,7 @@
 
 <body>
   <header>
-    <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
+    <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 12px 10px'>
       <a class="navbar-brand" href="/">Battleship</a>
       <!-- <button class='btn-battle-log'>Battle Log</button> -->
       <section class='battle-log'></section>
@@ -234,9 +244,10 @@
       <span class='error-msg'>
       </span>
     </div>
-
+    <span class='my-tag'><u>Me:</u></span>
     <div class='myContainer my-container'>
     </div>
+    <span class='oppo-tag'><u>Target:</u></span>
     <section class='op-container'>
     </section>
     <div class='log-container'>
