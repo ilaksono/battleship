@@ -192,7 +192,7 @@ app.post("/set/ready", (req, res) => {
 });
 
 app.get("/board", (req, res) => {
-  console.log(users['Player 1'].board, users['Player 2'].board);
+  // console.log(users['Player 1'].board, users['Player 2'].board);
 
   player = req.session.userID;
   const opponent = req.session.userID === "Player 1" ? "Player 2" : "Player 1";

@@ -220,8 +220,14 @@ module.exports = () => {
     users['Player 2'].ships = ships2Available;
     users['Player 2'].board = gameHelpers.generateBoard(10);
     users['Player 2'].state = game2State;
+    clearMemoryAI();
     setBoard();
     return;
+  }
+  const clearMemoryAI = () => {
+    AIMemory.shots = [];
+    AIMemory.hits = [];
+    AIMemory.candidates = [];
   }
 
   return {
