@@ -8,20 +8,27 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <!-- <link rel='stylesheet' href='../styles/main.css'> -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
   <style>
     .board-node {
       border: solid teal 1px;
       font-size: 0.8em;
+      height: 100%;
+      margin: 0;
+      padding: 0;
     }
 
     .myContainer {
-      width: 300px;
-      height: 300px;
-      display: block;
+      width: 350px;
+      height: 350px;
       text-align: center;
+    }
+
+    div span {
+      font: 2em;
+      font-weight: bold;
+
     }
 
     .myRow {
@@ -68,6 +75,8 @@
       padding: 0;
       border: solid rgb(247, 247, 247) 2px;
       background-color: rgb(63, 58, 58);
+      margin-left: 23px;
+      margin-top: 23px;
     }
 
     .op-container div {
@@ -81,10 +90,16 @@
       background-color: rgb(87, 135, 155);
       display: grid;
       grid-template-columns: repeat(10, 1fr);
+      margin-left: 23px;
 
     }
+
     .error-msg {
       font-family: 'Bungee', cursive;
+    }
+
+    .log-container {
+      margin-left: 33px;
     }
 
     .my-container div {
@@ -133,6 +148,8 @@
       }, 5000);
       $.ajax('/board', { method: 'GET' }).done((data) => {
         // console.log(data);
+        // console.log(data.battleLog);
+
         renderBoard(data.myBoard, true);
         renderBoard(data.opBoard, false);
       });
@@ -141,21 +158,28 @@
           renderBoard(data.myBoard, true);
           renderBoard(data.opBoard, false);
           if (data.url)
-            window.location.href = data.url
+          window.location.href = data.url
+          let i = 0;
+          $('.bat-log').empty();
+          if (data.battleLog.length > 15) i = data.battleLog.length - 15;
+          for (let j = i; j < data.battleLog.length; j++) {
+            const $newDesc = $('<p>').text(`${j}. ${data.battleLog[j].desc}`).appendTo($('.bat-log'))
+          }
           // console.log(data);
         });
 
       }, 1000);
       function getTheBoards(event) {
         $('.error-msg').empty();
-        $.ajax({ method: 'PUT', url: `/battle/${event.target.id}`, data: `${event.target.id}` })
+        const nodeId = event.target.id || '';
+        $.ajax({ type: 'POST', url: `/battle/${nodeId}`, data: `${nodeId}` })
           .done(() => {
             $.ajax('/board', { method: 'GET' }).done((data) => {
               renderBoard(data.myBoard, true);
               renderBoard(data.opBoard, false);
             });
           }).fail(xhr => {
-            $('.error-msg').text(xhr.responseJSON.error);
+            if (xhr.responseJSON) $('.error-msg').text(xhr.responseJSON.error);
             if ($('.error-msg').is(':hidden'))
               $('.error-msg').slideDown('fast');
           });
@@ -167,11 +191,11 @@
         $con = $(`.${whom}-container`)
         for (let row in board) {
           for (let col in board[row]) {
-            const txt = board[row][col] === 0 ? '' : board[row][col];
+            const txt = board[row][col] === 0 ? ' ' : board[row][col];
             const $newDiv = $('<div>').text(txt);
             $($newDiv).attr('id', `${row}${col}`).addClass('board-node');
             if (board[row][col] === 'X') $newDiv.addClass('hit-node');
-            if (board[row][col] === 'O') $newDiv.addClass('miss-node');
+            else if (board[row][col] === 'O') $newDiv.addClass('miss-node');
             if (!mine) {
               $($newDiv).hover(function () {
                 $(this).addClass('hover-op');
@@ -201,30 +225,26 @@
   <header>
     <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
       <a class="navbar-brand" href="/">Battleship</a>
-      <button class='btn-battle-log'>Battle Log</button>
+      <!-- <button class='btn-battle-log'>Battle Log</button> -->
       <section class='battle-log'></section>
     </nav>
   </header>
   <div class='battle-container'>
-    <table>
-      <tr>
-        <td>
-          <div>
-            <span class='error-msg'>
+    <div>
+      <span class='error-msg'>
+      </span>
+    </div>
 
-            </span>
-          </div>
-
-          <div class='myContainer my-container'>
-          </div>
-    </table>
-    </td>
-    </tr>
+    <div class='myContainer my-container'>
+    </div>
     <section class='op-container'>
-      <table class='board table table-bordered op-board' id=<%=number%>>
-  
-      </table>
     </section>
+    <div class='log-container'>
+      <h5>Battle Log:</h5>
+      <section class='bat-log'>
+      </section>
+
+    </div>
   </div>
 </body>
 

@@ -1,5 +1,5 @@
-const { users, battleLog } = require('../db/gameState');
-const gameHelpers = require('../helpers/gameFunctions')(users, battleLog);
+const { users, battleLog } = require('../../db/gameState');
+const gameHelpers = require('../../helpers/gameFunctions')(users, battleLog);
 
 
 board1.onclick = (evt) => {

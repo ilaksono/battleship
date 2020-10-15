@@ -82,6 +82,7 @@ module.exports = (users, overallState, battleLog, AIMemory) => {
   };
 
   const takeShot = (opponent, coord) => {
+    // console.log(users['Player 1'].board, users['Player 2'].board);
     if (users[opponent].board[coord[0]][coord[1]] !== 0) {
       revealShot(opponent, 'HIT', coord);
       const code = users[opponent].board[coord[0]][coord[1]];
@@ -304,7 +305,7 @@ module.exports = (users, overallState, battleLog, AIMemory) => {
       },
     };
 
-    for(const i = 0; i < battleLog.length; i++) {
+    for(let i = 0; i < battleLog.length; i++) {
       battleLog.shift();
       i--;
     }

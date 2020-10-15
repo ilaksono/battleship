@@ -8,7 +8,9 @@ const gameHelpers = require("./gameFunctions")(
 
 module.exports = () => {
   const setBoard = () => {
-    for (const ship of users["Player 2"].ships) setShip(ship);
+    for (const ship of users["Player 2"].ships) {
+      setShip(ship);
+    }
     users["Player 2"].opBoard = gameHelpers.generateBoard(10);
     users["Player 2"].state.phase = "battle";
   };
@@ -18,17 +20,18 @@ module.exports = () => {
     let can = Math.floor(Math.random() * 100);
     let orient = Math.floor(Math.random() * 2);
     const coord = [Math.floor(can / 10), can % 10];
-    if (
-      gameHelpers.isHorizontalRestricted("Player 2", ship, coord) &&
-      gameHelpers.isVerticalRestricted("Player 2", ship, coord)
-    )
+    if (gameHelpers.isHorizontalRestricted("Player 2", ship, coord) &&
+      gameHelpers.isVerticalRestricted("Player 2", ship, coord)) {
       return setShip(ship);
+    }
     if (orient === 0) {
       if (!gameHelpers.isHorizontalRestricted("Player 2", ship, coord))
-        gameHelpers.placeShipsHorizontal("Player 2", ship, coord);
-    } else if (orient === 1)
+        return gameHelpers.placeShipsHorizontal("Player 2", ship, coord);
+    } else if (orient === 1) {
       if (!gameHelpers.isVerticalRestricted("Player 2", ship, coord))
-        gameHelpers.placeShipsVertical("Player 2", ship, coord);
+        return gameHelpers.placeShipsVertical("Player 2", ship, coord);
+    }
+    return setShip(ship);
   };
 
   const takeShotAI = () => {
@@ -36,48 +39,41 @@ module.exports = () => {
     const opponent = "Player 1";
     if (AIMemory.candidates.length === 0) can = Math.floor(Math.random() * 100);
     else if (AIMemory.candidates.length > 0) can = AIMemory.candidates.shift();
+    if (AIMemory.shots.includes(can)) return takeShotAI();
     const coord = [Math.floor(can / 10), can % 10];
     console.log(can, coord);
     const hit = gameHelpers.takeShot("Player 1", coord);
     let desc = `AI shoots at ${gameHelpers.convertToBoardNotation(
       can.toString()
-    )}: ${hit ? "HIT" : "MISS"} `;
-    if (AIMemory.shots.includes(can)) return takeShotAI();
-    // if (AIMemory.candidates.includes(can)) "";
-    else {
-      AIMemory.shots.push(can);
-      if (hit) {
-        AIMemory.hits.push(can);
-        generateCandidatesAI(can);
-        if (gameHelpers.sunkShip(hit, users[opponent].board)) {
-          users[opponent].ships[hit.charCodeAt(0) - 65].sunk = true;
-          desc += `
+    )}: ${hit ? "HIT" : "MISS"}`;
+    AIMemory.shots.push(can);
+    if (hit) {
+      AIMemory.hits.push(can);
+      generateCandidatesAI(can);
+      if (gameHelpers.sunkShip(hit, users[opponent].board)) {
+        users[opponent].ships[hit.charCodeAt(0) - 65].sunk = true;
+        desc += `
         AI has sunk a ${gameHelpers.getShipByCode(hit, player).name}`;
-          if (gameHelpers.allShipsSunk(opponent)) {
-            users["Player 1"].state.phase = "end";
-            users["Player 2"].state.phase = "end";
-            desc += `${player} has won!`;
-            // return res.send(`${player} has won!`);
-            const templateVars = {
-              user: req.session.userID,
-              error: `${player} has won!`,
-            };
-            return;
-          }
+        if (gameHelpers.allShipsSunk(opponent)) {
+          users["Player 1"].state.phase = "end";
+          users["Player 2"].state.phase = "end";
+          desc += `${player} has won!`;
+
+          return "LOST";
         }
       }
-      const cpy1 = gameHelpers.createBoardCopy(users["Player 1"].opBoard);
-      const cpy2 = gameHelpers.createBoardCopy(users["Player 2"].opBoard);
-      battleLog.push({
-        turn: battleLog.length + 1,
-        boardState: {
-          "Player 1": cpy1,
-          "Player 2": cpy2,
-        },
-        desc,
-      });
-      return;
     }
+    const cpy1 = gameHelpers.createBoardCopy(users["Player 1"].opBoard);
+    const cpy2 = gameHelpers.createBoardCopy(users["Player 2"].opBoard);
+    battleLog.push({
+      turn: battleLog.length + 1,
+      boardState: {
+        "Player 1": cpy1,
+        "Player 2": cpy2,
+      },
+      desc,
+    });
+    return 0;
   };
   const generateCandidatesAI = (can) => {
     const canRow = Math.floor(can / 10);
