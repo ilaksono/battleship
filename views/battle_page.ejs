@@ -135,6 +135,11 @@
       color: rgb(129, 224, 129);
       background-color: rgba(129, 224, 129, 0.2);
     }
+    .info {
+      position: absolute;
+      bottom: 65px;
+      left: 100px;
+    }
 
     @media (max-width: 768px) {
       .battle-container {
@@ -175,7 +180,7 @@
           $('.bat-log').empty();
           if (data.battleLog.length > 15) i = data.battleLog.length - 15;
           for (let j = i; j < data.battleLog.length; j++) {
-            const $newDesc = $('<p>').text(`${j}. ${data.battleLog[j].desc}`).appendTo($('.bat-log'))
+            const $newDesc = $('<p>').text(`${j + 1}. ${data.battleLog[j].desc}`).appendTo($('.bat-log'))
           }
           // console.log(data);
         });
@@ -248,6 +253,13 @@
       <span class='error-msg'>
       </span>
     </div>
+    <p class='info'>
+      Destroyer: 2<br>
+      Submarine: 3<br>
+      Cruiser: 3<br>
+      Battleship: 4<br>
+      Carrier: 5
+    </p>
     <span class='my-tag'><u>Me:</u></span>
     <div class='myContainer my-container'>
     </div>

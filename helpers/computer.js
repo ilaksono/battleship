@@ -41,7 +41,7 @@ module.exports = () => {
     else if (AIMemory.candidates.length > 0) can = AIMemory.candidates.shift();
     if (AIMemory.shots.includes(can)) return takeShotAI();
     const coord = [Math.floor(can / 10), can % 10];
-    console.log(can, coord);
+    // console.log(can, coord);
     const hit = gameHelpers.takeShot("Player 1", coord);
     let desc = `AI shoots at ${gameHelpers.convertToBoardNotation(
       can.toString()
