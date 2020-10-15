@@ -40,7 +40,13 @@
       justify-self: center;
       padding: 0;
       margin: 0;
-      margin-top: 20px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+    .ins {
+      position: absolute;
+      top: 200px;
+      right: 70px;
     }
 
     @media (max-width: 768px) {
@@ -62,8 +68,16 @@
 </head>
 
 <body>
+  <div class='ins'>
+    <p>
+      1. Click tile to place ship
+    </p>
+<p>    2. Click same tile - toggle</p>
+<p>
+    3. Click different tile - confirm</p>
+  </div>
   <header>
-    <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 28px 10px'>
+    <nav class="navbar navbar-expand-md navbar-dark bg-info" style='padding: 8px 10px'>
       <a class="navbar-brand" href="/">Battleship</a>
     </nav>
   </header>
