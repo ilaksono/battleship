@@ -24,6 +24,14 @@
   .ins li {
     font-family: 'Bungee', cursive;
   }
+  .single-container{
+    margin-top: 33px;
+    display: flex;
+    flex-direction: column;
+  }
+  .btn-single{
+    margin-top: 13px;
+  }
 </style>
 
 <body>
@@ -54,13 +62,14 @@
       <li>Place 5 ships</li>
     </ul>
   </section>
+  <div class="single-container card text-center">
   <form action='/single' method='POST'>
     Single Player Mode: 
-    <button type='submit'>
-      PLAY NOW
-    </button> 
-
+    <p><button class='btn btn-danger btn-single' type='submit'>
+      PLAY NOW!!
+    </button></p> 
   </form>
+</div>
 
 </body>
 
