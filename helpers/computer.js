@@ -85,10 +85,150 @@ module.exports = () => {
     return;
   };
 
+  const playAgainSingle = () => {
+    let game1State = { // possible game states = register, set ,battle, end
+      phase: 'set',
+      setDone: true,
+      completeSet: false,
+      currentShipIn: 0,
+      activeShipCell: null,
+      currentShipOrient: null,
+      toggleShipOrient: function () {
+        if (this.currentShipOrient === 'H')
+          this.currentShipOrient = 'V';
+        else
+          this.currentShipOrient = 'H';
+      },
+    };
+
+    let ships1Available = [
+      {
+        available: true,
+        size: 2,
+        code: 'A',
+        sunk: false,
+        name: 'Destroyer',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'B',
+        sunk: false,
+        name: 'Submarine',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'C',
+        sunk: false,
+        name: 'Cruiser',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 4,
+        code: 'D',
+        sunk: false,
+        name: 'Battleship',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 5,
+        code: 'E',
+        sunk: false,
+        name: 'Carrier',
+        coordinates: [],
+        orientation: null
+      }
+    ];
+    let game2State = { // possible game states = register, set ,battle, end
+      phase: 'set',
+      setDone: true,
+      completeSet: false,
+      currentShipIn: 0,
+      activeShipCell: null,
+      currentShipOrient: null,
+      toggleShipOrient: function () {
+        if (this.currentShipOrient === 'H')
+          this.currentShipOrient = 'V';
+        else
+          this.currentShipOrient = 'H';
+      },
+    };
+    for(let i = 0; i < battleLog.length; i++) {
+      battleLog.shift();
+      i--;
+    }
+
+    let ships2Available = [
+      {
+        available: true,
+        size: 2,
+        code: 'A',
+        sunk: false,
+        name: 'Destroyer',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'B',
+        sunk: false,
+        name: 'Submarine',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 3,
+        code: 'C',
+        sunk: false,
+        name: 'Cruiser',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 4,
+        code: 'D',
+        sunk: false,
+        name: 'Battleship',
+        coordinates: [],
+        orientation: null
+      },
+      {
+        available: true,
+        size: 5,
+        code: 'E',
+        sunk: false,
+        name: 'Carrier',
+        coordinates: [],
+        orientation: null
+      }
+    ];
+    users["Player 1"].ships= ships1Available;
+    users['Player 1'].board = gameHelpers.generateBoard(10);
+    users['Player 1'].state = game1State;
+    users['Player 2'].ships = ships2Available;
+    users['Player 2'].board = gameHelpers.generateBoard(10);
+    users['Player 2'].state = game2State;
+    setBoard();
+    return;
+  }
+
   return {
     setBoard,
     setShip,
     takeShotAI,
     generateCandidatesAI,
+    playAgainSingle,
   };
 };

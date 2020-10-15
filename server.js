@@ -110,8 +110,8 @@ app.put("/set/:node", (req, res) => {
   const coord = gameHelpers.convertToCoord(req.params.node); // converts e.g.'A1' to [0, 0]
   if (users[player].state.phase === "set") {
     if (users[player].state.setDone) {
-      if (gameHelpers.isHorizontalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord) 
-      && !gameHelpers.isVerticalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)) {
+      if (gameHelpers.isHorizontalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)
+        && !gameHelpers.isVerticalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)) {
         gameHelpers.placeShipsVertical(player, users[player].ships[users[player].state.currentShipIn], coord);
         users[player].state.currentShipOrient = "H";
         gameHelpers.confirmShipPlacement(users[player].ships[users[player].state.currentShipIn], player);
@@ -127,7 +127,7 @@ app.put("/set/:node", (req, res) => {
         }
         return res.render("set_page", templateVars);
       } else if (
-        gameHelpers.isHorizontalRestricted(player,users[player].ships[users[player].state.currentShipIn],coord
+        gameHelpers.isHorizontalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord
         ) && gameHelpers.isVerticalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)) {
         const templateVars = {
           user,
@@ -137,12 +137,12 @@ app.put("/set/:node", (req, res) => {
         return res.render("set_page", templateVars);
       }
       users[player].state.setDone = false;
-      gameHelpers.placeShipsHorizontal(player,users[player].ships[users[player].state.currentShipIn],coord);
+      gameHelpers.placeShipsHorizontal(player, users[player].ships[users[player].state.currentShipIn], coord);
       users[player].state.activeShipCell = cellID;
       users[player].state.currentShipOrient = "H";
       let error = "";
-      if (gameHelpers.isVerticalRestricted(player,users[player].ships[users[player].state.currentShipIn],coord)) {
-        gameHelpers.confirmShipPlacement(users[player].ships[users[player].state.currentShipIn],player);
+      if (gameHelpers.isVerticalRestricted(player, users[player].ships[users[player].state.currentShipIn], coord)) {
+        gameHelpers.confirmShipPlacement(users[player].ships[users[player].state.currentShipIn], player);
         error = "Vertically restricted, confirmed placement";
       }
       if (!users[player].ships[4].available) {
@@ -192,7 +192,7 @@ app.post("/set/ready", (req, res) => {
 });
 
 app.get("/board", (req, res) => {
-      console.log(users['Player 1'].board, users['Player 2'].board);
+  console.log(users['Player 1'].board, users['Player 2'].board);
 
   player = req.session.userID;
   const opponent = req.session.userID === "Player 1" ? "Player 2" : "Player 1";
@@ -201,13 +201,13 @@ app.get("/board", (req, res) => {
       user: req.session.userID,
       error: `${player} has won!`,
     };
-    return res.json({ url: "/play_again" }).render("play_again", templateVars);
+    return res.json({ url: "/play_again" });
   } else if (gameHelpers.allShipsSunk(player)) {
     const templateVars = {
       user: req.session.userID,
       error: `${opponent} has won!`,
     };
-    return res.json({ url: "/play_again" }).render("play_again", templateVars);
+    return res.json({ url: "/play_again" });
   }
 
   return res.status(200).json({
@@ -291,6 +291,16 @@ app.post("/battle/:id", (req, res) => {
               user: req.session.userID,
               error: `${player} has won!`,
             };
+            const cpy1 = gameHelpers.createBoardCopy(users["Player 1"].opBoard);
+            const cpy2 = gameHelpers.createBoardCopy(users["Player 2"].opBoard);
+            battleLog.push({
+              turn: battleLog.length + 1,
+              boardState: {
+                "Player 1": cpy1,
+                "Player 2": cpy2,
+              },
+              desc,
+            });
             return res.status(200).render("play_again", templateVars);
           }
         }
@@ -362,8 +372,11 @@ app.get("/plays", (req, res) => {
 });
 
 app.get("/play-again", (req, res) => {
+  if (users['Player 2'].name === 'CPULUL') {
+    cpu.playAgainSingle();
+    return res.redirect('/set');
+  }
   gameHelpers.playAgain();
-
   res.redirect("/set");
 });
 

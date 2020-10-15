@@ -170,7 +170,7 @@ module.exports = (users, overallState, battleLog, AIMemory) => {
           this.currentShipOrient = 'H';
       },
     };
-    for(const i = 0; i < battleLog.length; i++) {
+    for(let i = 0; i < battleLog.length; i++) {
       battleLog.shift();
       i--;
     }
@@ -285,7 +285,7 @@ module.exports = (users, overallState, battleLog, AIMemory) => {
         orientation: null
       }
     ];
-    users["Player 1"] = { name: users['Player 1'].name, id: 'Player 1', board: generateBoard(10), opBoard: generateBoard(10), state: game1State, moves: [], hits: [], ships: ships1Available, heart: "" },
+    users["Player 1"] = { name: users['Player 1'].name, id: 'Player 1', board: generateBoard(10), opBoard: generateBoard(10), state: game1State, moves: [], hits: [], ships: ships1Available, heart: "" };
       users["Player 2"] = { name: users['Player 2'].name, id: 'Player 2', board: generateBoard(10), opBoard: generateBoard(10), state: game2State, moves: [], hits: [], ships: ships2Available, heart: "" };
   };
   const resetAll = () => {

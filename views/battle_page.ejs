@@ -117,11 +117,13 @@
       color: rgb(238, 124, 124);
       background-color: rgba(238, 124, 124, 0.2);
     }
+
     .my-tag {
       position: absolute;
       top: 150px;
       left: 150px;
     }
+
     .oppo-tag {
       position: absolute;
       top: 65px;
@@ -168,7 +170,7 @@
           renderBoard(data.myBoard, true);
           renderBoard(data.opBoard, false);
           if (data.url)
-          window.location.href = data.url
+            window.location.href = data.url
           let i = 0;
           $('.bat-log').empty();
           if (data.battleLog.length > 15) i = data.battleLog.length - 15;
@@ -187,6 +189,8 @@
             $.ajax('/board', { method: 'GET' }).done((data) => {
               renderBoard(data.myBoard, true);
               renderBoard(data.opBoard, false);
+              if (data.url)
+                window.location.href = data.url
             });
           }).fail(xhr => {
             if (xhr.responseJSON) $('.error-msg').text(xhr.responseJSON.error);
