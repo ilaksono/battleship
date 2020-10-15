@@ -1,4 +1,4 @@
-module.exports = (users, overallState, battleLog) => {
+module.exports = (users, overallState, battleLog, AIMemory) => {
 
 
   const allShipsSunk = (player) => {

@@ -1,15 +1,14 @@
-let game2State = { // possible game states = register, set ,battle, end
-  phase: 'register',
+let game2State = {
+  // possible game states = register, set ,battle, end
+  phase: "register",
   setDone: true,
   completeSet: false,
   currentShipIn: 0,
   activeShipCell: null,
   currentShipOrient: null,
   toggleShipOrient: function () {
-    if (this.currentShipOrient === 'H')
-      this.currentShipOrient = 'V';
-    else
-      this.currentShipOrient = 'H';
+    if (this.currentShipOrient === "H") this.currentShipOrient = "V";
+    else this.currentShipOrient = "H";
   },
 };
 
@@ -19,62 +18,61 @@ let ships2Available = [
   {
     available: true,
     size: 2,
-    code: 'A',
+    code: "A",
     sunk: false,
-    name: 'Destroyer',
+    name: "Destroyer",
     coordinates: [],
-    orientation: null
+    orientation: null,
   },
   {
     available: true,
     size: 3,
-    code: 'B',
+    code: "B",
     sunk: false,
-    name: 'Submarine',
+    name: "Submarine",
     coordinates: [],
-    orientation: null
+    orientation: null,
   },
   {
     available: true,
     size: 3,
-    code: 'C',
+    code: "C",
     sunk: false,
-    name: 'Cruiser',
+    name: "Cruiser",
     coordinates: [],
-    orientation: null
+    orientation: null,
   },
   {
     available: true,
     size: 4,
-    code: 'D',
+    code: "D",
     sunk: false,
-    name: 'Battleship',
+    name: "Battleship",
     coordinates: [],
-    orientation: null
+    orientation: null,
   },
   {
     available: true,
     size: 5,
-    code: 'E',
+    code: "E",
     sunk: false,
-    name: 'Carrier',
+    name: "Carrier",
     coordinates: [],
-    orientation: null
-  }
+    orientation: null,
+  },
 ];
 
-let game1State = { // possible game states = register, set ,battle, end
-  phase: 'register',
+let game1State = {
+  // possible game states = register, set ,battle, end
+  phase: "register",
   setDone: true,
   completeSet: false,
   currentShipIn: 0,
   activeShipCell: null,
   currentShipOrient: null,
   toggleShipOrient: function () {
-    if (this.currentShipOrient === 'H')
-      this.currentShipOrient = 'V';
-    else
-      this.currentShipOrient = 'H';
+    if (this.currentShipOrient === "H") this.currentShipOrient = "V";
+    else this.currentShipOrient = "H";
   },
 };
 
@@ -82,48 +80,48 @@ let ships1Available = [
   {
     available: true,
     size: 2,
-    code: 'A',
+    code: "A",
     sunk: false,
-    name: 'Destroyer',
+    name: "Destroyer",
     coordinates: [],
-    orientation: null
+    orientation: null,
   },
   {
     available: true,
     size: 3,
-    code: 'B',
+    code: "B",
     sunk: false,
-    name: 'Submarine',
+    name: "Submarine",
     coordinates: [],
-    orientation: null
+    orientation: null,
   },
   {
     available: true,
     size: 3,
-    code: 'C',
+    code: "C",
     sunk: false,
-    name: 'Cruiser',
+    name: "Cruiser",
     coordinates: [],
-    orientation: null
+    orientation: null,
   },
   {
     available: true,
     size: 4,
-    code: 'D',
+    code: "D",
     sunk: false,
-    name: 'Battleship',
+    name: "Battleship",
     coordinates: [],
-    orientation: null
+    orientation: null,
   },
   {
     available: true,
     size: 5,
-    code: 'E',
+    code: "E",
     sunk: false,
-    name: 'Carrier',
+    name: "Carrier",
     coordinates: [],
-    orientation: null
-  }
+    orientation: null,
+  },
 ];
 const overallState = {
   playerTurn: 1,
@@ -131,8 +129,33 @@ const overallState = {
 };
 
 const users = {
-  "Player 1": { name: '', id: '', board: [], opBoard: [], state: game1State, moves: [], hits: [], ships: ships1Available, heart: '' },
-  "Player 2": { name: '', id: '', board: [], opBoard: [], state: game2State, moves: [], hits: [], ships: ships2Available, heart: '' }
+  "Player 1": {
+    name: "",
+    id: "",
+    board: [],
+    opBoard: [],
+    state: game1State,
+    moves: [],
+    hits: [],
+    ships: ships1Available,
+    heart: "",
+  },
+  "Player 2": {
+    name: "",
+    id: "",
+    board: [],
+    opBoard: [],
+    state: game2State,
+    moves: [],
+    hits: [],
+    ships: ships2Available,
+    heart: "",
+  },
+};
+const AIMemory = {
+  shots: [],
+  hits: [],
+  candidates: [],
 };
 
-module.exports = { users, overallState, battleLog };
+module.exports = { users, overallState, battleLog, AIMemory };

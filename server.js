@@ -3,9 +3,9 @@ const port = 8080;
 const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
-
-const { users, overallState, battleLog } = require('./db/gameState');
-const gameHelpers = require('./helpers/gameFunctions')(users, overallState, battleLog);
+const cpu = require('./helpers/computer')();
+const { users, overallState, battleLog, AIMemory } = require('./db/gameState');
+const gameHelpers = require('./helpers/gameFunctions')(users, overallState, battleLog, AIMemory);
 
 const app = express();
 app.set("view engine", "ejs");
@@ -214,6 +214,26 @@ app.get('/db.json', (req, res) => {
   res.json({ users, battleLog });
 });
 
+app.post('/single', (req, res) => {
+  const player = 'Player 1';
+  req.session.userID = 'Player 1';
+  users[player].id = req.session.userID;
+  users[player].name = 'Jack Sparrow';
+  users[player].board = gameHelpers.generateBoard(10);
+  users[player].state.phase = 'set';
+  const heartBeat1 = setInterval(() => {
+    if (gameHelpers.calculateTime(users['Player 1'].heart) > 15000) {
+      gameHelpers.resetAll();
+      clearInterval(heartBeat1);
+    }
+  }, 15000);
+  users['Player 2'].id = 'Player 2';
+  users['Player 2'].name = 'CPULUL';
+  users['Player 2'].board = gameHelpers.generateBoard(10);
+  cpu.setBoard();
+  res.redirect('/set');
+})
+
 app.put('/battle/:node', (req, res) => {
   const player = req.session.userID;
   let user = users[player];
@@ -232,7 +252,8 @@ app.put('/battle/:node', (req, res) => {
           // console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
           users[opponent].ships[hit.charCodeAt(0) - 65].sunk = true;
           // console.log(users[player].ships[hit.charCodeAt(0) - 65].sunk);
-          desc += `\n${player} has sunk a ${gameHelpers.getShipByCode(hit, player).name}`;
+          desc += `
+          ${player} has sunk a ${gameHelpers.getShipByCode(hit, player).name}`;
           if (gameHelpers.allShipsSunk(opponent)) {
             users['Player 1'].state.phase = 'end';
             users['Player 2'].state.phase = 'end';
@@ -257,6 +278,7 @@ app.put('/battle/:node', (req, res) => {
         desc
       });
       // return res.redirect('/board');
+      if(users['Player 2'].name  === 'CPULUL') setTimeout(() => cpu.takeShotAI(), 1500);
       return res.status(200).redirect('/battle');
     } else {
       return res.status(400).json({
