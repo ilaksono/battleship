@@ -33,16 +33,14 @@ Identify which client/player is making request
 
 ## Final Product
 
-!["Home Page - Large"](https://github.com/ilaksono/tweeter/blob/master/docs/tweets-page-big.png)
-!["Specific URL Edit Page"](https://github.com/ilaksono/tweeter/blob/master/docs/tweets-page-small.png)
+!["Battle page"](https://github.com/ilaksono/battleship/blob/master/docs/battle-page.png)
+!["Set Ships Page"](https://github.com/ilaksono/battleship/blob/master/docs/set-page.png)
 
 ## Documentation
 
 **The board mechanics functions can be found in /helpers/gameFunctions.js**
 
 **The AI/CPU functions can be found in /helpers/computer.js**
-
-- `scrollFunction()`: reveals to-top button when reaching 170px from top of document, else hides the button.
 
 **There is currently 1 server module, router modules for set/battle will be added in future**
 
