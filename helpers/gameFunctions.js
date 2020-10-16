@@ -1,4 +1,3 @@
-const cpu = require('./computer')()
 module.exports = (users, overallState, battleLog, AIMemory) => {
 
 
@@ -421,7 +420,10 @@ module.exports = (users, overallState, battleLog, AIMemory) => {
         orientation: null
       }
     ];
-    cpu.clearMemoryAI();
+    AIMemory.shots = [];
+    AIMemory.hits = [];
+    AIMemory.candidates = [];
+
     const overallState = {
       playerTurn: 1,
       // phases 0: register, 0.5: registerDone, 1:set, 1.5: setDone, 2: battle, 3: end
