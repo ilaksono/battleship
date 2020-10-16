@@ -49,14 +49,14 @@ app.post("/register", (req, res) => {
         gameHelpers.resetAll();
         clearInterval(heartBeat1);
       }
-    }, 15000);
+    }, 120000);
   } else if (player === "Player 2") {
     const heartbeat2 = setInterval(() => {
       if (gameHelpers.calculateTime(users["Player 2"].heart) > 15000) {
         gameHelpers.resetAll();
         clearInterval(heartbeat2);
       }
-    }, 15000);
+    }, 120000);
   }
   res.redirect("/");
 });
@@ -252,7 +252,7 @@ app.post("/single", (req, res) => {
       gameHelpers.resetAll();
       clearInterval(heartBeat1);
     }
-  }, 360000);
+  }, 120000); // 2 minutes
   users["Player 2"].id = "Player 2";
   users["Player 2"].name = "CPULUL";
   users["Player 2"].board = gameHelpers.generateBoard(10);
